@@ -69,7 +69,7 @@ export const projects: Project[] = [
     longDescription:
       "SANAD is an AI-powered platform that revolutionizes the university discovery process. Students chat with an AI advisor to get instant answers about programs, requirements, scholarships, and deadlines. The platform analyzes student profiles to recommend best-fit universities and guides them through every step of the application process. Built to serve 10K+ students across 30+ countries.",
     tags: ["Next.js", "React", "AI", "TypeScript", "Tailwind"],
-    image: "/images/projects/sanad/cover.svg",
+    image: "/images/projects/sanad/cover.png",
     links: [{ label: "Live", url: "https://asksanad.com" }],
     status: "Live",
     role: "Full Stack Developer",
@@ -92,7 +92,7 @@ export const projects: Project[] = [
     longDescription:
       "HeyRabit is a comprehensive startup ecosystem platform built for the MENA region. It connects startups with incubators, accelerators, and funding opportunities through AI-powered matchmaking. Features include an AI Idea Generator for venture validation, a Pitch Deck Studio for investor-ready presentations, and an Impact Dashboard for portfolio tracking. Integrated with HubSpot, Salesforce, and government innovation portals.",
     tags: ["React", "TypeScript", "AI", "Tailwind", "Node.js"],
-    image: "/images/projects/heyrabit/cover.svg",
+    image: "/images/projects/heyrabit/cover.png",
     links: [{ label: "Live", url: "https://heyrabit.com" }],
     status: "Live",
     role: "Full Stack Developer",

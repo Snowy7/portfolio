@@ -30,7 +30,7 @@ const { Content } = await render(post);
         <div class="max-w-3xl mx-auto">
 
           <!-- Back -->
-          <a href="/blog" class="boot-stagger-1 inline-flex items-center gap-2 text-[10px] text-[#555] hover:text-green-400 transition-colors tracking-wider mb-8">
+          <a href="/blog" data-animate="boot-1" class="inline-flex items-center gap-2 text-[10px] text-[#555] hover:text-green-400 transition-colors tracking-wider mb-8">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
@@ -38,7 +38,7 @@ const { Content } = await render(post);
           </a>
 
           <!-- Header -->
-          <header class="boot-stagger-2 mb-10">
+          <header data-animate="boot-2" class="mb-10">
             <div class="flex items-center gap-3 text-[10px] text-[#555] mb-4">
               <span>{post.data.date}</span>
               <span>&middot;</span>
@@ -55,7 +55,7 @@ const { Content } = await render(post);
           </header>
 
           <!-- Content -->
-          <div class="boot-stagger-3 prose-terminal">
+          <div data-animate="boot-3" class="prose-terminal">
             {post.body && post.body.trim().length > 0 ? (
               <Content />
             ) : (
@@ -85,4 +85,5 @@ const { Content } = await render(post);
 
     </AppShell>
   </div>
+
 </Base>

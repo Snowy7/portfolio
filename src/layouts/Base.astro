@@ -150,7 +150,7 @@ const fullImageUrl = image.startsWith("http") ? image : `${siteUrl}${image}`;
 
     <slot />
 
-    <!-- Scroll reveal observer + loading bar logic -->
+    <!-- Scroll reveal, boot animations, loading bar -->
     <script>
       function initReveal() {
         const els = document.querySelectorAll('.reveal:not(.revealed)');
@@ -166,12 +166,34 @@ const fullImageUrl = image.startsWith("http") ? image : `${siteUrl}${image}`;
         els.forEach((el) => obs.observe(el));
       }
 
+      // Boot animation trigger — waits for Vue to render [data-animate] elements
+      function triggerBootAnimations() {
+        const els = document.querySelectorAll('[data-animate]:not(.animate)');
+        if (els.length > 0) {
+          els.forEach((el) => el.classList.add('animate'));
+          return;
+        }
+        // If no elements found yet (Vue hasn't rendered), poll briefly
+        let attempts = 0;
+        const poll = setInterval(() => {
+          const found = document.querySelectorAll('[data-animate]:not(.animate)');
+          if (found.length > 0) {
+            found.forEach((el) => el.classList.add('animate'));
+            clearInterval(poll);
+          } else if (++attempts > 30) {
+            clearInterval(poll); // Give up after ~1.5s
+          }
+        }, 50);
+      }
+
       // Run on initial load
       initReveal();
+      triggerBootAnimations();
 
       // Re-run after view transition swap
       document.addEventListener('astro:page-load', () => {
         initReveal();
+        triggerBootAnimations();
       });
 
       // Loading bar
