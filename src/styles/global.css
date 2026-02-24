@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-display: "Outfit", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-editorial: "Sora", system-ui, sans-serif;
+  --font-instrument: "Instrument Serif", Georgia, serif;
+  --font-anybody: "Anybody", system-ui, sans-serif;
+  --font-plex: "IBM Plex Mono", monospace;
+  --font-cormorant: "Cormorant Garamond", Georgia, serif;
+  --font-space: "Space Mono", monospace;
+}
