@@ -25,6 +25,7 @@
       ref="windowEl"
       class="fixed z-[95] flex flex-col bg-[#0a0a0a] border border-[#2a2a2a] shadow-2xl shadow-black/80 transition-[inset,border-radius] duration-200 ease-out"
       :class="windowClass"
+      @touchmove.prevent
     >
       <!-- Title bar -->
       <div
@@ -48,17 +49,11 @@
       <!-- Snake game -->
       <div
         v-if="snakeActive"
-        ref="snakeContainer"
         class="flex-1 flex flex-col p-3 sm:p-4 overflow-hidden"
-        @touchstart="onSnakeTouchStart"
-        @touchend="onSnakeTouchEnd"
       >
         <div class="flex items-center justify-between mb-2 text-[10px] font-plex">
           <span class="text-green-400/50">Score: {{ snakeScore }}</span>
-          <span class="text-[#444]">
-            <span class="hidden sm:inline">WASD/arrows · Q quit</span>
-            <span class="sm:hidden">Swipe to move</span>
-          </span>
+          <span class="text-[#444] hidden sm:inline">WASD/arrows · Q quit</span>
         </div>
         <div class="flex-1 flex items-center justify-center min-h-0">
           <canvas
@@ -69,6 +64,39 @@
             :style="snakeCanvasStyle"
           />
         </div>
+
+        <!-- Mobile D-Pad controls -->
+        <div class="md:hidden flex flex-col items-center gap-1 mt-3">
+          <button
+            @touchstart.prevent="dpadDir(0, -1)"
+            class="w-12 h-10 flex items-center justify-center bg-[#111] border border-[#2a2a2a] rounded-lg active:bg-green-400/20 active:border-green-400/40 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" /></svg>
+          </button>
+          <div class="flex gap-1">
+            <button
+              @touchstart.prevent="dpadDir(-1, 0)"
+              class="w-12 h-10 flex items-center justify-center bg-[#111] border border-[#2a2a2a] rounded-lg active:bg-green-400/20 active:border-green-400/40 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+            </button>
+            <div class="w-12 h-10"></div>
+            <button
+              @touchstart.prevent="dpadDir(1, 0)"
+              class="w-12 h-10 flex items-center justify-center bg-[#111] border border-[#2a2a2a] rounded-lg active:bg-green-400/20 active:border-green-400/40 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+            </button>
+          </div>
+          <button
+            @touchstart.prevent="dpadDir(0, 1)"
+            class="w-12 h-10 flex items-center justify-center bg-[#111] border border-[#2a2a2a] rounded-lg active:bg-green-400/20 active:border-green-400/40 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+          </button>
+        </div>
+
+        <!-- Bottom bar: game over + buttons -->
         <div class="flex items-center justify-between mt-2">
           <p v-if="snakeGameOver" class="text-green-400/60 text-[10px] font-plex">
             Game Over! Score: {{ snakeScore }}
@@ -96,7 +124,7 @@
       <div
         v-else
         ref="outputEl"
-        class="flex-1 p-3 sm:p-4 overflow-y-auto space-y-1 font-plex text-xs scrollbar-thin"
+        class="flex-1 p-3 sm:p-4 overflow-y-auto space-y-1 font-plex text-xs scrollbar-thin overscroll-contain"
         @click="focusInput"
       >
         <div v-for="(line, i) in lines" :key="i">
@@ -136,7 +164,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick, computed } from "vue";
+import { ref, watch, onMounted, onUnmounted, nextTick, computed } from "vue";
 
 const mounted = ref(false);
 const isOpen = ref(false);
@@ -157,10 +185,27 @@ const isMobile = computed(() => {
   return window.innerWidth < 768;
 });
 
+// ─── Body scroll lock ───
+const shouldLockScroll = computed(() => isOpen.value && !isMinimized.value);
+
+watch(shouldLockScroll, (locked) => {
+  if (locked) {
+    document.body.style.overflow = "hidden";
+    // Prevent iOS rubber-band bounce
+    document.body.style.position = "fixed";
+    document.body.style.inset = "0";
+    document.body.style.width = "100%";
+  } else {
+    document.body.style.overflow = "";
+    document.body.style.position = "";
+    document.body.style.inset = "";
+    document.body.style.width = "";
+  }
+});
+
 const windowClass = computed(() => {
   if (isMaximized.value) return "inset-0 rounded-none";
   if (hasDragged.value) return "rounded-xl";
-  // Mobile: full-screen with small gap. Desktop: fixed bottom-right
   return "inset-0 sm:inset-2 md:inset-auto md:bottom-4 md:right-4 md:w-[560px] md:h-[420px] rounded-none sm:rounded-xl";
 });
 
@@ -255,14 +300,13 @@ let historyIndex = -1;
 // ─── Snake ───
 const snakeActive = ref(false);
 const snakeCanvas = ref<HTMLCanvasElement | null>(null);
-const snakeContainer = ref<HTMLDivElement | null>(null);
 const snakeScore = ref(0);
 const snakeGameOver = ref(false);
 
 // Responsive snake sizing
 const snakeCellSize = computed(() => isMobile.value ? 12 : 14);
-const snakeCols = computed(() => isMobile.value ? 22 : 28);
-const snakeRows = computed(() => isMobile.value ? 16 : 18);
+const snakeCols = computed(() => isMobile.value ? 20 : 28);
+const snakeRows = computed(() => isMobile.value ? 14 : 18);
 const snakeCanvasW = computed(() => snakeCols.value * snakeCellSize.value);
 const snakeCanvasH = computed(() => snakeRows.value * snakeCellSize.value);
 const snakeCanvasStyle = computed(() =>
@@ -274,34 +318,11 @@ let snakeDir = { x: 1, y: 0 };
 let snakeNextDir = { x: 1, y: 0 };
 let food = { x: 15, y: 10 };
 
-// Touch controls for snake
-let touchStartX = 0;
-let touchStartY = 0;
-
-function onSnakeTouchStart(e: TouchEvent) {
-  if (!snakeActive.value) return;
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
-}
-
-function onSnakeTouchEnd(e: TouchEvent) {
-  if (!snakeActive.value) return;
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  const dy = e.changedTouches[0].clientY - touchStartY;
-  const absDx = Math.abs(dx);
-  const absDy = Math.abs(dy);
-
-  // Minimum swipe distance
-  if (Math.max(absDx, absDy) < 20) return;
-
-  let nd: { x: number; y: number };
-  if (absDx > absDy) {
-    nd = dx > 0 ? { x: 1, y: 0 } : { x: -1, y: 0 };
-  } else {
-    nd = dy > 0 ? { x: 0, y: 1 } : { x: 0, y: -1 };
-  }
-  if (nd.x !== -snakeDir.x || nd.y !== -snakeDir.y) {
-    snakeNextDir = nd;
+// D-Pad handler
+function dpadDir(x: number, y: number) {
+  if (snakeGameOver.value) return;
+  if (x !== -snakeDir.x || y !== -snakeDir.y) {
+    snakeNextDir = { x, y };
   }
 }
 
@@ -411,7 +432,7 @@ function execute() {
   const cmd = raw.toLowerCase().split(/\s+/)[0];
   if (cmd === "snake") {
     currentInput.value = "";
-    lines.value.push({ type: "output", text: "Starting Snake... " + (isMobile.value ? "Swipe to move." : "WASD/arrows. Q to quit."), green: true });
+    lines.value.push({ type: "output", text: "Starting Snake..." + (isMobile.value ? "" : " WASD/arrows. Q to quit."), green: true });
     nextTick(() => { snakeActive.value = true; nextTick(() => startSnake()); });
     return;
   }
@@ -454,7 +475,7 @@ function startSnake() {
   snakeDir = { x: 1, y: 0 }; snakeNextDir = { x: 1, y: 0 };
   placeFood(); drawSnake();
   if (snakeInterval) clearInterval(snakeInterval);
-  snakeInterval = setInterval(snakeTick, isMobile.value ? 120 : 100);
+  snakeInterval = setInterval(snakeTick, isMobile.value ? 130 : 100);
 }
 function placeFood() {
   let a = 0;
@@ -478,15 +499,12 @@ function drawSnake() {
   const cols = snakeCols.value;
   const rows = snakeRows.value;
   ctx.fillStyle = "#000"; ctx.fillRect(0, 0, snakeCanvasW.value, snakeCanvasH.value);
-  // Grid dots
   ctx.fillStyle = "rgba(34,197,94,0.04)";
   for (let x = 0; x < cols; x++) for (let y = 0; y < rows; y++) ctx.fillRect(x * c + c / 2 - 0.5, y * c + c / 2 - 0.5, 1, 1);
-  // Snake
   snake.forEach((seg, i) => {
     ctx.fillStyle = `rgba(34,197,94,${i === 0 ? 1 : Math.max(0.3, 1 - i * 0.04)})`;
     ctx.fillRect(seg.x * c + 1, seg.y * c + 1, c - 2, c - 2);
   });
-  // Food
   ctx.fillStyle = "#fff"; ctx.fillRect(food.x * c + 2, food.y * c + 2, c - 4, c - 4);
 }
 function quitSnake() {
@@ -524,6 +542,11 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener("keydown", handleKeys);
   if (snakeInterval) clearInterval(snakeInterval);
+  // Ensure scroll is restored on unmount
+  document.body.style.overflow = "";
+  document.body.style.position = "";
+  document.body.style.inset = "";
+  document.body.style.width = "";
 });
 </script>
 
