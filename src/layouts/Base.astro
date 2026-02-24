@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
 
 interface Props {
   title: string;
@@ -78,6 +79,9 @@ const fullImageUrl = image.startsWith("http") ? image : `${siteUrl}${image}`;
       rel="stylesheet"
     />
 
+    <!-- View Transitions (SPA-like navigation) -->
+    <ClientRouter />
+
     <!-- JSON-LD Structured Data -->
     {type === "website" ? (
       <script type="application/ld+json" set:html={JSON.stringify({
@@ -130,6 +134,46 @@ const fullImageUrl = image.startsWith("http") ? image : `${siteUrl}${image}`;
     ) : null}
   </head>
   <body>
+    <!-- Loading bar for page transitions -->
+    <div id="nav-loading-bar"></div>
+
     <slot />
+
+    <!-- Scroll reveal observer + loading bar logic -->
+    <script>
+      function initReveal() {
+        const els = document.querySelectorAll('.reveal:not(.revealed)');
+        if (!els.length) return;
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add('revealed');
+              obs.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        els.forEach((el) => obs.observe(el));
+      }
+
+      // Run on initial load
+      initReveal();
+
+      // Re-run after view transition swap
+      document.addEventListener('astro:page-load', () => {
+        initReveal();
+      });
+
+      // Loading bar
+      const bar = document.getElementById('nav-loading-bar');
+      document.addEventListener('astro:before-preparation', () => {
+        if (bar) { bar.classList.add('active'); }
+      });
+      document.addEventListener('astro:after-swap', () => {
+        if (bar) {
+          bar.classList.remove('active');
+          bar.style.transform = '';
+        }
+      });
+    </script>
   </body>
 </html>

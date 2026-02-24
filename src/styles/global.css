@@ -13,6 +13,161 @@
   --font-space: "Space Mono", monospace;
 }
 
+/* ─── Page Transitions (Astro View Transitions) ─── */
+/* Override default Astro transition with a hacker-themed effect */
+@keyframes page-fade-in {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes page-fade-out {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-4px); }
+}
+
+/* Scanline flash on transition */
+@keyframes scanline-flash {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+::view-transition-old(root) {
+  animation: page-fade-out 0.15s ease-in forwards;
+}
+
+::view-transition-new(root) {
+  animation: page-fade-in 0.25s ease-out 0.05s both;
+}
+
+/* Scanline overlay during transitions */
+::view-transition-group(root) {
+  overflow: hidden;
+}
+
+/* ─── Home Page Boot Sequence ─── */
+@keyframes boot-in {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+    filter: blur(4px);
+  }
+  60% {
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes glitch-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-8px) skewX(-2deg);
+    clip-path: inset(0 100% 0 0);
+  }
+  30% {
+    opacity: 1;
+    clip-path: inset(0 20% 0 0);
+    transform: translateX(3px) skewX(1deg);
+  }
+  50% {
+    clip-path: inset(0 0 0 0);
+    transform: translateX(-2px) skewX(-0.5deg);
+  }
+  70% {
+    transform: translateX(1px) skewX(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) skewX(0);
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes line-expand {
+  0% { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
+}
+
+@keyframes cursor-blink-in {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+.boot-stagger-1 { animation: boot-in 0.5s ease-out 0.1s both; }
+.boot-stagger-2 { animation: boot-in 0.5s ease-out 0.2s both; }
+.boot-stagger-3 { animation: boot-in 0.5s ease-out 0.35s both; }
+.boot-stagger-4 { animation: boot-in 0.5s ease-out 0.5s both; }
+.boot-stagger-5 { animation: boot-in 0.5s ease-out 0.65s both; }
+.boot-stagger-6 { animation: boot-in 0.5s ease-out 0.8s both; }
+
+.glitch-title {
+  animation: glitch-in 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.05s both;
+}
+
+.boot-photo {
+  animation: boot-in 0.8s ease-out 0.4s both;
+}
+
+/* ─── Scroll Reveal ─── */
+@keyframes reveal-up {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal {
+  opacity: 0;
+}
+
+.reveal.revealed {
+  animation: reveal-up 0.5s ease-out forwards;
+}
+
+/* Stagger children inside revealed sections */
+.reveal.revealed > .reveal-child:nth-child(1) { animation-delay: 0s; }
+.reveal.revealed > .reveal-child:nth-child(2) { animation-delay: 0.06s; }
+.reveal.revealed > .reveal-child:nth-child(3) { animation-delay: 0.12s; }
+.reveal.revealed > .reveal-child:nth-child(4) { animation-delay: 0.18s; }
+.reveal.revealed > .reveal-child:nth-child(5) { animation-delay: 0.24s; }
+.reveal.revealed > .reveal-child:nth-child(6) { animation-delay: 0.3s; }
+
+/* ─── Loading bar at top during navigation ─── */
+@keyframes loading-bar {
+  0% { transform: scaleX(0); transform-origin: left; }
+  50% { transform: scaleX(0.7); transform-origin: left; }
+  100% { transform: scaleX(1); transform-origin: left; }
+}
+
+#nav-loading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #22c55e;
+  z-index: 9999;
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+#nav-loading-bar.active {
+  opacity: 1;
+  animation: loading-bar 0.8s ease-out forwards;
+}
+
 /* ─── Blog prose styling (markdown rendered by Astro) ─── */
 .prose-terminal h2 {
   font-size: 1.125rem;

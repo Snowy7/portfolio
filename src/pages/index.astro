@@ -31,13 +31,13 @@ const blogPosts = allPosts
         <div class="max-w-4xl mx-auto">
           <div class="grid md:grid-cols-[1fr_200px] gap-8 items-start">
             <div>
-              <h1 class="font-anybody font-800 text-3xl sm:text-4xl md:text-5xl leading-[0.9] tracking-tight text-white mb-3">
+              <h1 class="glitch-title font-anybody font-800 text-3xl sm:text-4xl md:text-5xl leading-[0.9] tracking-tight text-white mb-3">
                 Hey, I'm Islam.
               </h1>
-              <TypingHero client:only="vue" />
-              <p class="text-sm text-[#888] leading-relaxed max-w-lg mt-6 mb-4">{profile.bio}</p>
-              <p class="text-sm text-[#666] leading-relaxed max-w-lg">{profile.degree} @ {profile.university}. Based in {profile.location}.</p>
-              <div class="flex items-center flex-wrap gap-3 sm:gap-4 mt-8 text-xs">
+              <div class="boot-stagger-2"><TypingHero client:only="vue" /></div>
+              <p class="boot-stagger-3 text-sm text-[#888] leading-relaxed max-w-lg mt-6 mb-4">{profile.bio}</p>
+              <p class="boot-stagger-4 text-sm text-[#666] leading-relaxed max-w-lg">{profile.degree} @ {profile.university}. Based in {profile.location}.</p>
+              <div class="boot-stagger-5 flex items-center flex-wrap gap-3 sm:gap-4 mt-8 text-xs">
                 <a href={profile.github} class="text-[#666] hover:text-green-400 transition-colors">GitHub</a>
                 <span class="text-[#333]">/</span>
                 <a href={profile.linkedin} class="text-[#666] hover:text-green-400 transition-colors">LinkedIn</a>
@@ -48,7 +48,7 @@ const blogPosts = allPosts
               </div>
             </div>
             <!-- Photo -->
-            <div class="hidden md:block rounded-xl overflow-hidden border border-[#1a1a1a] relative group">
+            <div class="boot-photo hidden md:block rounded-xl overflow-hidden border border-[#1a1a1a] relative group">
               <img
                 src="/images/me/linkedin-pfp.png"
                 alt="Islam Azzam"
@@ -61,7 +61,7 @@ const blogPosts = allPosts
       </section>
 
       <!-- About: Currently + Interests -->
-      <section id="about" class="py-10 sm:py-12 px-4 sm:px-6 relative z-10">
+      <section id="about" class="reveal py-10 sm:py-12 px-4 sm:px-6 relative z-10">
         <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
           <div>
             <p class="text-[10px] tracking-[0.3em] uppercase text-green-400/50 mb-4">Right now</p>
@@ -96,7 +96,7 @@ const blogPosts = allPosts
       </section>
 
       <!-- Featured Projects -->
-      <section id="work" class="py-10 sm:py-12 px-4 sm:px-6 relative z-10">
+      <section id="work" class="reveal py-10 sm:py-12 px-4 sm:px-6 relative z-10">
         <div class="max-w-4xl mx-auto">
           <div class="flex items-baseline justify-between mb-6">
             <p class="text-[10px] tracking-[0.3em] uppercase text-green-400/50">Selected projects</p>
@@ -134,7 +134,7 @@ const blogPosts = allPosts
       </section>
 
       <!-- Blog -->
-      <section id="blog" class="py-10 sm:py-12 px-4 sm:px-6 relative z-10">
+      <section id="blog" class="reveal py-10 sm:py-12 px-4 sm:px-6 relative z-10">
         <div class="max-w-4xl mx-auto">
           <div class="flex items-baseline justify-between mb-6">
             <p class="text-[10px] tracking-[0.3em] uppercase text-green-400/50">Writing</p>
@@ -159,7 +159,7 @@ const blogPosts = allPosts
       </section>
 
       <!-- Experience -->
-      <section class="py-10 sm:py-12 px-4 sm:px-6 relative z-10">
+      <section class="reveal py-10 sm:py-12 px-4 sm:px-6 relative z-10">
         <div class="max-w-4xl mx-auto">
           <p class="text-[10px] tracking-[0.3em] uppercase text-green-400/50 mb-6">Career</p>
           {experience.map((exp) => (
@@ -187,7 +187,7 @@ const blogPosts = allPosts
       </section>
 
       <!-- Contact -->
-      <section id="contact" class="py-12 sm:py-16 px-4 sm:px-6 relative z-10">
+      <section id="contact" class="reveal py-12 sm:py-16 px-4 sm:px-6 relative z-10">
         <div class="max-w-4xl mx-auto">
           <p class="text-[10px] tracking-[0.3em] uppercase text-green-400/50 mb-4">Say hello</p>
           <h2 class="font-anybody font-800 text-2xl text-white tracking-tight mb-3">
