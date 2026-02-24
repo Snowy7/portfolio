@@ -258,7 +258,7 @@ const commands: Record<string, () => string[]> = {
     "",
     '<span class="text-green-400">┌─ About ─────────────────────────────────┐</span>',
     '<span class="text-green-400">│</span>  <span class="text-white">Islam Azzam</span> — Software Dev & Network Eng',
-    '<span class="text-green-400">│</span>  50+ projects · Games · Web · Autonomous',
+    '<span class="text-green-400">│</span>  8+ years coding · Games · Web · Autonomous',
     '<span class="text-green-400">│</span>',
     '<span class="text-green-400">│</span>  Location: <span class="text-[#bbb]">Doha, Qatar</span>',
     '<span class="text-green-400">│</span>  Education: <span class="text-[#bbb]">B.Sc. EE — Telecom @ UDST</span>',

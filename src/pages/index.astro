@@ -1,12 +1,28 @@
 ---
 import Base from "../layouts/Base.astro";
-import { profile, featuredProjects, experience, blogPosts, interests, currentlyDoing } from "../data/portfolio";
+import { profile, featuredProjects, experience, interests, currentlyDoing } from "../data/portfolio";
+import { getCollection } from "astro:content";
 import AppShell from "../components/AppShell.vue";
 import TypingHero from "../components/TypingHero.vue";
 import TimeZone from "../components/TimeZone.vue";
+
+const allPosts = await getCollection("blog");
+const blogPosts = allPosts
+  .filter((p) => p.data.published)
+  .sort((a, b) => {
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const parse = (d: string) => {
+      const [mon, yr] = d.split(" ");
+      return parseInt(yr) * 12 + months.indexOf(mon);
+    };
+    return parse(b.data.date) - parse(a.data.date);
+  });
 ---
 
-<Base title="Islam Azzam | Software Developer">
+<Base
+  title="Islam Azzam | Software Developer & Network Engineer"
+  description="Islam Azzam — Software Developer & Network Engineer with 8+ years of experience. Building web platforms, multiplayer games, AI tools, and autonomous vehicles."
+>
   <div class="min-h-screen bg-black text-[#999] font-plex antialiased selection:bg-green-500/20 selection:text-green-300">
     <AppShell isHome client:only="vue">
 
@@ -126,15 +142,15 @@ import TimeZone from "../components/TimeZone.vue";
           </div>
           <div class="grid sm:grid-cols-2 gap-3">
             {blogPosts.map((post) => (
-              <a href={`/blog/${post.slug}`} class="block group">
+              <a href={`/blog/${post.id}`} class="block group">
                 <article class="p-4 sm:p-5 border border-[#1a1a1a] hover:border-[#2a2a2a] transition-colors rounded-lg h-full">
                   <div class="flex items-center gap-2 text-[10px] text-[#555] mb-2">
-                    <span>{post.date}</span>
+                    <span>{post.data.date}</span>
                     <span>&middot;</span>
-                    <span>{post.readTime}</span>
+                    <span>{post.data.readTime}</span>
                   </div>
-                  <h3 class="text-xs text-white font-bold mb-1 group-hover:text-green-400 transition-colors">{post.title}</h3>
-                  <p class="text-[11px] text-[#777] leading-relaxed">{post.excerpt}</p>
+                  <h3 class="text-xs text-white font-bold mb-1 group-hover:text-green-400 transition-colors">{post.data.title}</h3>
+                  <p class="text-[11px] text-[#777] leading-relaxed">{post.data.excerpt}</p>
                 </article>
               </a>
             ))}

@@ -1,91 +1,28 @@
 ---
 import Base from "../../layouts/Base.astro";
-import { blogPosts } from "../../data/portfolio";
+import { getCollection, render } from "astro:content";
 import AppShell from "../../components/AppShell.vue";
 
-export function getStaticPaths() {
-  return blogPosts.map((post) => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts
+    .filter((p) => p.data.published)
+    .map((post) => ({
+      params: { slug: post.id },
+      props: { post },
+    }));
 }
 
 const { post } = Astro.props;
-
-// Simple markdown-to-HTML: handles ##, **, `, ```, - lists, and paragraphs
-function renderMarkdown(md: string): string {
-  const lines = md.split("\n");
-  let html = "";
-  let inCodeBlock = false;
-  let inList = false;
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-
-    // Code blocks
-    if (line.startsWith("```")) {
-      if (inCodeBlock) {
-        html += "</code></pre>";
-        inCodeBlock = false;
-      } else {
-        if (inList) { html += "</ul>"; inList = false; }
-        html += '<pre class="bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg p-4 overflow-x-auto mb-6 text-xs"><code class="text-green-400/70">';
-        inCodeBlock = true;
-      }
-      continue;
-    }
-
-    if (inCodeBlock) {
-      html += line.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "\n";
-      continue;
-    }
-
-    // Empty lines
-    if (line.trim() === "") {
-      if (inList) { html += "</ul>"; inList = false; }
-      continue;
-    }
-
-    // Inline formatting helper
-    const fmt = (s: string) =>
-      s
-        .replace(/\*\*(.+?)\*\*/g, '<strong class="text-white">$1</strong>')
-        .replace(/`(.+?)`/g, '<code class="text-green-400/70 bg-[#111] px-1.5 py-0.5 rounded text-[11px]">$1</code>');
-
-    // Headers
-    if (line.startsWith("## ")) {
-      if (inList) { html += "</ul>"; inList = false; }
-      html += `<h2 class="text-lg text-white font-bold mt-10 mb-4">${fmt(line.slice(3))}</h2>`;
-      continue;
-    }
-    if (line.startsWith("### ")) {
-      if (inList) { html += "</ul>"; inList = false; }
-      html += `<h3 class="text-sm text-white font-bold mt-8 mb-3">${fmt(line.slice(4))}</h3>`;
-      continue;
-    }
-
-    // List items
-    if (/^[-*]\s/.test(line) || /^\d+\.\s/.test(line)) {
-      if (!inList) { html += '<ul class="space-y-2 mb-6 ml-4">'; inList = true; }
-      const text = line.replace(/^[-*]\s+/, "").replace(/^\d+\.\s+/, "");
-      html += `<li class="text-sm text-[#999] leading-relaxed flex gap-2"><span class="text-green-400/30 shrink-0">&rarr;</span><span>${fmt(text)}</span></li>`;
-      continue;
-    }
-
-    // Paragraph
-    if (inList) { html += "</ul>"; inList = false; }
-    html += `<p class="text-sm text-[#999] leading-relaxed mb-4">${fmt(line)}</p>`;
-  }
-
-  if (inList) html += "</ul>";
-  if (inCodeBlock) html += "</code></pre>";
-  return html;
-}
-
-const contentHtml = renderMarkdown(post.content);
+const { Content } = await render(post);
 ---
 
-<Base title={`${post.title} | Islam Azzam`}>
+<Base
+  title={`${post.data.title} | Islam Azzam`}
+  description={post.data.excerpt}
+  type="article"
+  article={{ publishedTime: post.data.date, tags: post.data.tags }}
+>
   <div class="min-h-screen bg-black text-[#999] font-plex antialiased selection:bg-green-500/20 selection:text-green-300">
     <AppShell client:only="vue">
 
@@ -103,22 +40,28 @@ const contentHtml = renderMarkdown(post.content);
           <!-- Header -->
           <header class="mb-10">
             <div class="flex items-center gap-3 text-[10px] text-[#555] mb-4">
-              <span>{post.date}</span>
+              <span>{post.data.date}</span>
               <span>&middot;</span>
-              <span>{post.readTime}</span>
+              <span>{post.data.readTime}</span>
             </div>
             <h1 class="font-anybody font-800 text-2xl sm:text-3xl md:text-4xl leading-tight tracking-tight text-white mb-4">
-              {post.title}
+              {post.data.title}
             </h1>
             <div class="flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
+              {post.data.tags.map((tag) => (
                 <span class="text-[9px] tracking-wider uppercase text-[#555] px-2 py-0.5 border border-[#1a1a1a] rounded">{tag}</span>
               ))}
             </div>
           </header>
 
           <!-- Content -->
-          <div class="prose-terminal" set:html={contentHtml} />
+          <div class="prose-terminal">
+            {post.body && post.body.trim().length > 0 ? (
+              <Content />
+            ) : (
+              <p class="text-sm text-[#555] italic">No content yet. Check back soon.</p>
+            )}
+          </div>
 
           <!-- Navigation -->
           <div class="pt-10 mt-10 border-t border-[#1a1a1a] flex justify-between items-center">

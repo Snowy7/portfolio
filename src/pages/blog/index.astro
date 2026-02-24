@@ -1,10 +1,26 @@
 ---
 import Base from "../../layouts/Base.astro";
-import { blogPosts } from "../../data/portfolio";
+import { getCollection } from "astro:content";
 import AppShell from "../../components/AppShell.vue";
+
+const allPosts = await getCollection("blog");
+const posts = allPosts
+  .filter((p) => p.data.published)
+  .sort((a, b) => {
+    // Sort newest first by parsing "Mon YYYY" dates
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const parse = (d: string) => {
+      const [mon, yr] = d.split(" ");
+      return parseInt(yr) * 12 + months.indexOf(mon);
+    };
+    return parse(b.data.date) - parse(a.data.date);
+  });
 ---
 
-<Base title="Islam Azzam | Blog">
+<Base
+  title="Blog | Islam Azzam"
+  description="Thoughts on game dev, web platforms, autonomous systems, and the things I learn along the way."
+>
   <div class="min-h-screen bg-black text-[#999] font-plex antialiased selection:bg-green-500/20 selection:text-green-300">
     <AppShell client:only="vue">
 
@@ -29,20 +45,20 @@ import AppShell from "../../components/AppShell.vue";
       <!-- Posts -->
       <section class="pb-16 px-4 sm:px-6 relative z-10">
         <div class="max-w-3xl mx-auto space-y-1">
-          {blogPosts.map((post) => (
-            <a href={`/blog/${post.slug}`} class="group block">
+          {posts.map((post) => (
+            <a href={`/blog/${post.id}`} class="group block">
               <article class="py-6 border-b border-[#111] hover:border-[#222] transition-colors">
                 <div class="flex items-center gap-3 text-[10px] text-[#555] mb-2">
-                  <span>{post.date}</span>
+                  <span>{post.data.date}</span>
                   <span>&middot;</span>
-                  <span>{post.readTime}</span>
+                  <span>{post.data.readTime}</span>
                   <div class="flex-1"></div>
-                  {post.tags.map((tag) => (
+                  {post.data.tags.map((tag) => (
                     <span class="text-[9px] tracking-wider uppercase text-[#444] px-1.5 py-0.5 border border-[#1a1a1a] rounded">{tag}</span>
                   ))}
                 </div>
-                <h2 class="text-base text-white font-bold mb-2 group-hover:text-green-400 transition-colors">{post.title}</h2>
-                <p class="text-xs text-[#777] leading-relaxed">{post.excerpt}</p>
+                <h2 class="text-base text-white font-bold mb-2 group-hover:text-green-400 transition-colors">{post.data.title}</h2>
+                <p class="text-xs text-[#777] leading-relaxed">{post.data.excerpt}</p>
               </article>
             </a>
           ))}

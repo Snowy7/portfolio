@@ -13,7 +13,11 @@ export function getStaticPaths() {
 const { project } = Astro.props;
 ---
 
-<Base title={`${project.title} | Islam Azzam`}>
+<Base
+  title={`${project.title} | Islam Azzam`}
+  description={project.description}
+  image={project.image}
+>
   <div class="min-h-screen bg-black text-[#999] font-plex antialiased selection:bg-green-500/20 selection:text-green-300">
     <AppShell client:only="vue">
 
