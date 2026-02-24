@@ -1,6 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
-import { profile, projects, skills, experience, blogPosts, interests, currentlyDoing } from "../data/portfolio";
+import { profile, featuredProjects, experience, blogPosts, interests, currentlyDoing } from "../data/portfolio";
 import AppShell from "../components/AppShell.vue";
 import TypingHero from "../components/TypingHero.vue";
 import TimeZone from "../components/TimeZone.vue";
@@ -34,9 +34,9 @@ import TimeZone from "../components/TimeZone.vue";
             <!-- Photo -->
             <div class="hidden md:block rounded-xl overflow-hidden border border-[#1a1a1a] relative group">
               <img
-                src="https://picsum.photos/seed/islamv20/400/500"
-                alt="Islam"
-                class="w-full aspect-[3/4] object-cover opacity-50 grayscale group-hover:opacity-70 group-hover:grayscale-0 transition-all duration-700"
+                src="/images/me/linkedin-pfp.png"
+                alt="Islam Azzam"
+                class="w-full aspect-[3/4] object-cover opacity-60 grayscale group-hover:opacity-80 group-hover:grayscale-0 transition-all duration-700"
               />
               <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
             </div>
@@ -79,41 +79,39 @@ import TimeZone from "../components/TimeZone.vue";
         </div>
       </section>
 
-      <!-- Featured Projects (compact, links to /projects) -->
+      <!-- Featured Projects -->
       <section id="work" class="py-10 sm:py-12 px-4 sm:px-6 relative z-10">
         <div class="max-w-4xl mx-auto">
           <div class="flex items-baseline justify-between mb-6">
             <p class="text-[10px] tracking-[0.3em] uppercase text-green-400/50">Selected projects</p>
-            <a href="/projects" class="text-[10px] text-green-400/40 hover:text-green-400 transition-colors tracking-wider">VIEW ALL →</a>
+            <a href="/projects" class="text-[10px] text-green-400/40 hover:text-green-400 transition-colors tracking-wider">VIEW ALL &rarr;</a>
           </div>
 
-          {projects.slice(0, 3).map((project, i) => (
-            <article class="group py-5 border-t border-[#1a1a1a] hover:border-[#2a2a2a] transition-colors">
-              <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-5">
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center gap-3 mb-2">
-                    <span class="text-[10px] text-green-400/30">0{i + 1}</span>
-                    <h3 class="text-sm text-white font-bold group-hover:text-green-400 transition-colors">{project.title}</h3>
-                  </div>
-                  <p class="text-xs text-[#777] leading-relaxed mb-3">{project.description}</p>
+          {featuredProjects.slice(0, 4).map((project, i) => (
+            <a href={`/projects/${project.slug}`} class="block group">
+              <article class="py-5 border-t border-[#1a1a1a] hover:border-[#2a2a2a] transition-colors">
+                <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-5">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-3 mb-2">
+                      <span class="text-[10px] text-green-400/30">0{i + 1}</span>
+                      <h3 class="text-sm text-white font-bold group-hover:text-green-400 transition-colors">{project.title}</h3>
+                      <span class="text-[9px] text-[#444] tracking-wider uppercase">{project.category}</span>
+                    </div>
+                    <p class="text-xs text-[#777] leading-relaxed mb-3">{project.description}</p>
                     <div class="flex items-center flex-wrap gap-2">
-                    {project.tags.slice(0, 3).map((tag) => (
-                      <span class="text-[9px] tracking-wider uppercase text-[#555] px-2 py-0.5 border border-[#222]">{tag}</span>
-                    ))}
-                    <div class="flex-1"></div>
-                    <div class="flex gap-3 text-[10px] tracking-wider shrink-0">
-                      {project.links.map((link) => (
-                        <a href={link.url} target="_blank" rel="noopener" class="text-green-400/50 hover:text-green-400 transition-colors uppercase">{link.label}</a>
+                      {project.tags.slice(0, 3).map((tag) => (
+                        <span class="text-[9px] tracking-wider uppercase text-[#555] px-2 py-0.5 border border-[#222]">{tag}</span>
                       ))}
-                      <span class="text-[#444]">{project.status}</span>
+                      <div class="flex-1"></div>
+                      <span class="text-[10px] text-[#444] tracking-wider">{project.status}</span>
                     </div>
                   </div>
+                  <div class="hidden md:block overflow-hidden rounded-md shrink-0 w-[200px]">
+                    <img src={project.image} alt={project.title} class="w-full aspect-video object-cover opacity-20 grayscale group-hover:opacity-40 group-hover:grayscale-0 transition-all duration-700" loading="lazy" />
+                  </div>
                 </div>
-                <div class="hidden md:block overflow-hidden rounded-md shrink-0 w-[200px]">
-                  <img src={project.image} alt={project.title} class="w-full aspect-video object-cover opacity-20 grayscale group-hover:opacity-40 group-hover:grayscale-0 transition-all duration-700" loading="lazy" />
-                </div>
-              </div>
-            </article>
+              </article>
+            </a>
           ))}
           <div class="border-t border-[#1a1a1a]"></div>
         </div>
@@ -122,18 +120,23 @@ import TimeZone from "../components/TimeZone.vue";
       <!-- Blog -->
       <section id="blog" class="py-10 sm:py-12 px-4 sm:px-6 relative z-10">
         <div class="max-w-4xl mx-auto">
-          <p class="text-[10px] tracking-[0.3em] uppercase text-green-400/50 mb-6">Writing</p>
+          <div class="flex items-baseline justify-between mb-6">
+            <p class="text-[10px] tracking-[0.3em] uppercase text-green-400/50">Writing</p>
+            <a href="/blog" class="text-[10px] text-green-400/40 hover:text-green-400 transition-colors tracking-wider">ALL POSTS &rarr;</a>
+          </div>
           <div class="grid sm:grid-cols-2 gap-3">
             {blogPosts.map((post) => (
-              <article class="group p-4 sm:p-5 border border-[#1a1a1a] hover:border-[#2a2a2a] transition-colors cursor-pointer rounded-lg">
-                <div class="flex items-center gap-2 text-[10px] text-[#555] mb-2">
-                  <span>{post.date}</span>
-                  <span>&middot;</span>
-                  <span>{post.readTime}</span>
-                </div>
-                <h3 class="text-xs text-white font-bold mb-1 group-hover:text-green-400 transition-colors">{post.title}</h3>
-                <p class="text-[11px] text-[#777] leading-relaxed">{post.excerpt}</p>
-              </article>
+              <a href={`/blog/${post.slug}`} class="block group">
+                <article class="p-4 sm:p-5 border border-[#1a1a1a] hover:border-[#2a2a2a] transition-colors rounded-lg h-full">
+                  <div class="flex items-center gap-2 text-[10px] text-[#555] mb-2">
+                    <span>{post.date}</span>
+                    <span>&middot;</span>
+                    <span>{post.readTime}</span>
+                  </div>
+                  <h3 class="text-xs text-white font-bold mb-1 group-hover:text-green-400 transition-colors">{post.title}</h3>
+                  <p class="text-[11px] text-[#777] leading-relaxed">{post.excerpt}</p>
+                </article>
+              </a>
             ))}
           </div>
         </div>
@@ -146,15 +149,19 @@ import TimeZone from "../components/TimeZone.vue";
           {experience.map((exp) => (
             <div class="py-4 border-t border-[#1a1a1a] group">
               <div class="flex items-start gap-3">
-                {exp.logo && (
+                {exp.logo ? (
                   <img src={exp.logo} alt={exp.company} class="w-8 h-8 rounded-md object-cover opacity-40 group-hover:opacity-70 transition-opacity shrink-0 mt-0.5" loading="lazy" />
+                ) : (
+                  <div class="w-8 h-8 rounded-md bg-[#1a1a1a] shrink-0 mt-0.5 flex items-center justify-center text-[10px] text-[#444]">
+                    {exp.company.charAt(0)}
+                  </div>
                 )}
                 <div class="flex-1 min-w-0">
                   <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-1 gap-1">
                     <h3 class="text-xs text-white font-bold group-hover:text-green-400 transition-colors">{exp.role}</h3>
                     <span class="text-[10px] text-[#555]">{exp.period}</span>
                   </div>
-                  <p class="text-[10px] text-green-400/30 mb-1">{exp.company} · {exp.location}</p>
+                  <p class="text-[10px] text-green-400/30 mb-1">{exp.company} &middot; {exp.location}</p>
                   <p class="text-[11px] text-[#777] leading-relaxed">{exp.description}</p>
                 </div>
               </div>
@@ -177,7 +184,7 @@ import TimeZone from "../components/TimeZone.vue";
 
       <footer class="py-6 px-4 sm:px-6 border-t border-[#1a1a1a] relative z-10">
         <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-[10px] text-[#555]">
-          <p>&copy; 2026 Islam &middot; <span class="text-[#333]">click the logo 5 times</span></p>
+          <p>&copy; 2026 Islam Azzam &middot; <span class="text-[#333]">click the logo 5 times</span></p>
           <p class="text-[#333]">Built with Astro + Vue + Tailwind</p>
         </div>
       </footer>

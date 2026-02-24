@@ -31,6 +31,9 @@
               <h2 class="font-anybody font-800 text-3xl md:text-4xl text-white tracking-tight mb-2">
                 The Other Side
               </h2>
+              <div class="flex items-center justify-center gap-4 mb-2">
+                <img src="/images/me/islam-in-car.jpg" alt="Islam" class="w-20 h-20 rounded-full object-cover border-2 border-white/10" />
+              </div>
               <p class="text-sm text-white/30">You found the hidden room. Here's the stuff that didn't fit on the main page.</p>
               <p class="text-[10px] text-white/15 mt-1">a.k.a. Snowy7</p>
             </div>
@@ -41,11 +44,11 @@
               <div class="bg-white/[0.03] backdrop-blur-sm border border-white/[0.06] rounded-xl p-6 space-y-3">
                 <p class="text-[10px] tracking-[0.3em] uppercase text-green-400/50">The human</p>
                 <div class="space-y-2 text-xs text-white/50">
-                  <p>&#x1f3ae; Started coding with game modding at 13</p>
-                  <p>&#x1f3d7; 50+ projects shipped across games, web, and hardware</p>
+                  <p>&#x1f3ae; Started coding 8+ years ago with game modding</p>
                   <p>&#x1f30d; Based in Doha, Qatar</p>
                   <p>&#x1f393; Studying Telecom & Network Engineering at UDST</p>
                   <p>&#x1f3c6; Led autonomous vehicle to 2nd place internationally</p>
+                  <p>&#x1f9e9; Can solve a Rubik's cube (not speedcubing fast, but still)</p>
                   <p>&#x1f579; Snowy7 on every platform</p>
                 </div>
               </div>
@@ -77,13 +80,13 @@
               <div class="bg-white/[0.03] backdrop-blur-sm border border-white/[0.06] rounded-xl p-6 space-y-3">
                 <p class="text-[10px] tracking-[0.3em] uppercase text-green-400/50">On repeat</p>
                 <div class="space-y-2 text-xs text-white/50">
-                  <p>&#x1f3b5; Game soundtracks (Hollow Knight, Celeste)</p>
-                  <p>&#x1f3b5; Lo-fi beats to code/relax to</p>
-                  <p>&#x1f3b5; Nujabes - Feather</p>
-                  <p>&#x1f3b5; Hans Zimmer - anything, really</p>
+                  <p>&#x1f4fa; Anime: Attack on Titan, Jujutsu Kaisen, Solo Leveling</p>
+                  <p>&#x1f4d6; Manhwa/Manga rabbit hole enthusiast</p>
+                  <p>&#x1f3b5; Game OSTs (Hollow Knight, Celeste)</p>
+                  <p>&#x1f3b5; Lo-fi beats & Hans Zimmer soundtracks</p>
                   <p>&#x1f3b5; Arabic classics when nostalgic</p>
                 </div>
-                <p class="text-[10px] text-white/20 mt-2">Mostly game OSTs and lo-fi while coding</p>
+                <p class="text-[10px] text-white/20 mt-2">Anime + manga + lo-fi = the holy trinity</p>
               </div>
             </div>
 
@@ -119,10 +122,10 @@ let clickTimer: ReturnType<typeof setTimeout> | null = null;
 let raf = 0;
 
 const stats = [
-  { value: "50+", label: "Projects shipped" },
-  { value: "4+", label: "Years coding" },
+  { value: "8+", label: "Years coding" },
   { value: "4", label: "Game jam awards" },
   { value: "2nd", label: "Shell Eco-Marathon" },
+  { value: "1", label: "Rubik's cube" },
 ];
 
 function handleClick() {

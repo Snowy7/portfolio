@@ -1,0 +1,145 @@
+---
+import Base from "../../layouts/Base.astro";
+import { blogPosts } from "../../data/portfolio";
+import AppShell from "../../components/AppShell.vue";
+
+export function getStaticPaths() {
+  return blogPosts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+
+// Simple markdown-to-HTML: handles ##, **, `, ```, - lists, and paragraphs
+function renderMarkdown(md: string): string {
+  const lines = md.split("\n");
+  let html = "";
+  let inCodeBlock = false;
+  let inList = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // Code blocks
+    if (line.startsWith("```")) {
+      if (inCodeBlock) {
+        html += "</code></pre>";
+        inCodeBlock = false;
+      } else {
+        if (inList) { html += "</ul>"; inList = false; }
+        html += '<pre class="bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg p-4 overflow-x-auto mb-6 text-xs"><code class="text-green-400/70">';
+        inCodeBlock = true;
+      }
+      continue;
+    }
+
+    if (inCodeBlock) {
+      html += line.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "\n";
+      continue;
+    }
+
+    // Empty lines
+    if (line.trim() === "") {
+      if (inList) { html += "</ul>"; inList = false; }
+      continue;
+    }
+
+    // Inline formatting helper
+    const fmt = (s: string) =>
+      s
+        .replace(/\*\*(.+?)\*\*/g, '<strong class="text-white">$1</strong>')
+        .replace(/`(.+?)`/g, '<code class="text-green-400/70 bg-[#111] px-1.5 py-0.5 rounded text-[11px]">$1</code>');
+
+    // Headers
+    if (line.startsWith("## ")) {
+      if (inList) { html += "</ul>"; inList = false; }
+      html += `<h2 class="text-lg text-white font-bold mt-10 mb-4">${fmt(line.slice(3))}</h2>`;
+      continue;
+    }
+    if (line.startsWith("### ")) {
+      if (inList) { html += "</ul>"; inList = false; }
+      html += `<h3 class="text-sm text-white font-bold mt-8 mb-3">${fmt(line.slice(4))}</h3>`;
+      continue;
+    }
+
+    // List items
+    if (/^[-*]\s/.test(line) || /^\d+\.\s/.test(line)) {
+      if (!inList) { html += '<ul class="space-y-2 mb-6 ml-4">'; inList = true; }
+      const text = line.replace(/^[-*]\s+/, "").replace(/^\d+\.\s+/, "");
+      html += `<li class="text-sm text-[#999] leading-relaxed flex gap-2"><span class="text-green-400/30 shrink-0">&rarr;</span><span>${fmt(text)}</span></li>`;
+      continue;
+    }
+
+    // Paragraph
+    if (inList) { html += "</ul>"; inList = false; }
+    html += `<p class="text-sm text-[#999] leading-relaxed mb-4">${fmt(line)}</p>`;
+  }
+
+  if (inList) html += "</ul>";
+  if (inCodeBlock) html += "</code></pre>";
+  return html;
+}
+
+const contentHtml = renderMarkdown(post.content);
+---
+
+<Base title={`${post.title} | Islam Azzam`}>
+  <div class="min-h-screen bg-black text-[#999] font-plex antialiased selection:bg-green-500/20 selection:text-green-300">
+    <AppShell client:only="vue">
+
+      <article class="pt-20 sm:pt-24 pb-16 px-4 sm:px-6 relative z-10">
+        <div class="max-w-3xl mx-auto">
+
+          <!-- Back -->
+          <a href="/blog" class="inline-flex items-center gap-2 text-[10px] text-[#555] hover:text-green-400 transition-colors tracking-wider mb-8">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            ALL POSTS
+          </a>
+
+          <!-- Header -->
+          <header class="mb-10">
+            <div class="flex items-center gap-3 text-[10px] text-[#555] mb-4">
+              <span>{post.date}</span>
+              <span>&middot;</span>
+              <span>{post.readTime}</span>
+            </div>
+            <h1 class="font-anybody font-800 text-2xl sm:text-3xl md:text-4xl leading-tight tracking-tight text-white mb-4">
+              {post.title}
+            </h1>
+            <div class="flex flex-wrap gap-2">
+              {post.tags.map((tag) => (
+                <span class="text-[9px] tracking-wider uppercase text-[#555] px-2 py-0.5 border border-[#1a1a1a] rounded">{tag}</span>
+              ))}
+            </div>
+          </header>
+
+          <!-- Content -->
+          <div class="prose-terminal" set:html={contentHtml} />
+
+          <!-- Navigation -->
+          <div class="pt-10 mt-10 border-t border-[#1a1a1a] flex justify-between items-center">
+            <a href="/blog" class="text-[10px] text-[#555] hover:text-green-400 transition-colors tracking-wider">
+              &larr; All posts
+            </a>
+            <a href="/#contact" class="text-[10px] text-green-400/50 hover:text-green-400 transition-colors tracking-wider">
+              Get in touch &rarr;
+            </a>
+          </div>
+
+        </div>
+      </article>
+
+      <footer class="py-6 px-4 sm:px-6 border-t border-[#1a1a1a] relative z-10">
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-[10px] text-[#555]">
+          <p>&copy; 2026 Islam Azzam</p>
+          <a href="/" class="hover:text-[#999] transition-colors">Back to home</a>
+        </div>
+      </footer>
+
+    </AppShell>
+  </div>
+</Base>

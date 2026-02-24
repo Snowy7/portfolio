@@ -11,7 +11,7 @@ const phrases = [
   "I build games, websites, and autonomous systems.",
   "I ship multiplayer experiences on Steam.",
   "I led an autonomous vehicle to 2nd place.",
-  "I won 4 game jam awards across 2 jams.",
+  "I build AI-powered web platforms.",
   "I'm probably debugging networking code right now.",
 ];
 

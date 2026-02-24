@@ -8,7 +8,7 @@
       <div class="hidden md:flex items-center gap-5 text-[#666]">
         <a :href="isHome ? '#about' : '/'" class="hover:text-green-400 transition-colors">{{ isHome ? 'About' : 'Home' }}</a>
         <a href="/projects" class="hover:text-green-400 transition-colors">Projects</a>
-        <a :href="isHome ? '#blog' : '/#blog'" class="hover:text-green-400 transition-colors">Blog</a>
+        <a href="/blog" class="hover:text-green-400 transition-colors">Blog</a>
         <a :href="isHome ? '#contact' : '/#contact'" class="hover:text-green-400 transition-colors">Contact</a>
         <button
           @click="$emit('openTerminal')"
@@ -40,7 +40,7 @@
       >
         <a :href="isHome ? '#about' : '/'" @click="mobileOpen = false" class="block py-2.5 text-sm text-[#888] hover:text-green-400 transition-colors">{{ isHome ? 'About' : 'Home' }}</a>
         <a href="/projects" @click="mobileOpen = false" class="block py-2.5 text-sm text-[#888] hover:text-green-400 transition-colors">Projects</a>
-        <a :href="isHome ? '#blog' : '/#blog'" @click="mobileOpen = false" class="block py-2.5 text-sm text-[#888] hover:text-green-400 transition-colors">Blog</a>
+        <a href="/blog" @click="mobileOpen = false" class="block py-2.5 text-sm text-[#888] hover:text-green-400 transition-colors">Blog</a>
         <a :href="isHome ? '#contact' : '/#contact'" @click="mobileOpen = false" class="block py-2.5 text-sm text-[#888] hover:text-green-400 transition-colors">Contact</a>
         <button
           @click="$emit('openTerminal'); mobileOpen = false"
