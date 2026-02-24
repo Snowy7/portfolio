@@ -29,9 +29,23 @@ const blogPosts = allPosts
       <!-- Hero -->
       <section id="hero" class="pt-20 sm:pt-24 pb-12 sm:pb-16 px-4 sm:px-6 relative z-10">
         <div class="max-w-4xl mx-auto">
-          <div class="grid md:grid-cols-[1fr_200px] gap-8 items-start">
+          <div class="grid md:grid-cols-[1fr_200px] gap-6 md:gap-8 items-start">
             <div>
-              <h1 data-animate="glitch" class="font-anybody font-800 text-3xl sm:text-4xl md:text-5xl leading-[0.9] tracking-tight text-white mb-3">
+              <!-- Mobile: photo + name row -->
+              <div class="flex items-center gap-4 mb-4 md:hidden">
+                <div data-animate="photo" class="w-16 h-16 rounded-full overflow-hidden border border-[#1a1a1a] shrink-0">
+                  <img
+                    src="/images/me/linkedin-pfp.png"
+                    alt="Islam Azzam"
+                    class="w-full h-full object-cover opacity-70 grayscale"
+                  />
+                </div>
+                <h1 data-animate="glitch" class="font-anybody font-800 text-3xl leading-[0.9] tracking-tight text-white">
+                  Hey, I'm Islam.
+                </h1>
+              </div>
+              <!-- Desktop: name only (photo is in side column) -->
+              <h1 data-animate="glitch" class="hidden md:block font-anybody font-800 text-4xl md:text-5xl leading-[0.9] tracking-tight text-white mb-3">
                 Hey, I'm Islam.
               </h1>
               <div data-animate="boot-2"><TypingHero client:only="vue" /></div>
@@ -47,7 +61,7 @@ const blogPosts = allPosts
                 <span class="text-[#555]"><TimeZone client:load /></span>
               </div>
             </div>
-            <!-- Photo -->
+            <!-- Desktop photo (side column) -->
             <div data-animate="photo" class="hidden md:block rounded-xl overflow-hidden border border-[#1a1a1a] relative group">
               <img
                 src="/images/me/linkedin-pfp.png"
