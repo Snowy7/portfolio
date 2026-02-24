@@ -1,43 +1,51 @@
-# Astro Starter Kit: Minimal
+# islam's portfolio
 
-```sh
-npm create astro@latest -- --template minimal
+Personal portfolio site with a hacker/terminal aesthetic — green-on-black, matrix rain, monospace everything.
+
+## Tech Stack
+
+- **Astro** — Static site generation
+- **Vue 3** — Interactive components
+- **Tailwind CSS v4** — Styling
+
+## Features
+
+- Matrix rain canvas background
+- Floating terminal window (draggable, minimize/maximize/close)
+  - Commands: `help`, `about`, `skills`, `projects`, `blog`, `contact`, `neofetch`, `snake`, `clear`
+  - Built-in Snake game
+- Secret Door easter egg (5 clicks on the logo)
+- Typing hero animation
+- Responsive design with mobile hamburger menu
+
+## Project Structure
+
+```
+src/
+  components/
+    AppShell.vue          # Root shell: matrix rain + nav + terminal + secret door
+    MatrixRain.vue        # Canvas-based matrix rain background
+    NavBar.vue            # Responsive nav with hamburger menu
+    TerminalWindow.vue    # Floating terminal with snake game
+    SecretDoor.vue        # Hidden page easter egg
+    TypingHero.vue        # Typewriter text animation
+    TimeZone.vue          # Live clock
+  data/
+    portfolio.ts          # All site content (projects, skills, experience, blog, etc.)
+  layouts/
+    Base.astro            # Shared HTML layout
+  pages/
+    index.astro           # Home page
+    projects/index.astro  # Projects page
+  styles/
+    global.css            # Tailwind v4 config + custom theme tokens
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Commands
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+| Command           | Action                                   |
+| :---------------- | :--------------------------------------- |
+| `npm install`     | Install dependencies                     |
+| `npm run dev`     | Start dev server at `localhost:4321`     |
+| `npm run build`   | Build production site to `./dist/`       |
+| `npm run preview` | Preview production build locally         |

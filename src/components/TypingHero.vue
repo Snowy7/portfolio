@@ -8,11 +8,11 @@
 import { ref, onMounted, onUnmounted } from "vue";
 
 const phrases = [
-  "I build things for the web.",
-  "I write code that humans can read.",
-  "I turn ideas into shipped products.",
-  "I care about performance & accessibility.",
-  "I'm probably refactoring something right now.",
+  "I build games, websites, and autonomous systems.",
+  "I ship multiplayer experiences on Steam.",
+  "I led an autonomous vehicle to 2nd place.",
+  "I won 4 game jam awards across 2 jams.",
+  "I'm probably debugging networking code right now.",
 ];
 
 const displayText = ref("");

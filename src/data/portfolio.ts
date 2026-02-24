@@ -1,10 +1,18 @@
+export interface ProjectLink {
+  label: string;
+  url: string;
+}
+
 export interface Project {
   title: string;
   description: string;
   tags: string[];
   image: string;
-  link: string;
-  github: string;
+  links: ProjectLink[];
+  status: string;
+  role: string;
+  year: number;
+  featured: boolean;
 }
 
 export interface Skill {
@@ -17,121 +25,206 @@ export interface Experience {
   role: string;
   company: string;
   period: string;
+  location: string;
   description: string;
+  logo?: string;
 }
 
 export const profile = {
-  name: "Islam",
-  title: "Full Stack Web Developer",
-  tagline: "Building elegant digital experiences from front to back.",
-  bio: "I'm a passionate full-stack developer with 5+ years of experience crafting performant, accessible web applications. I love turning complex problems into simple, beautiful solutions. When I'm not coding, you'll find me exploring new technologies and contributing to open source.",
-  email: "islam@example.dev",
-  github: "https://github.com/islam",
-  linkedin: "https://linkedin.com/in/islam",
-  twitter: "https://twitter.com/islam_dev",
-  location: "Remote / Worldwide",
-  avatar: "https://api.dicebear.com/9.x/initials/svg?seed=Islam&backgroundColor=0f172a&textColor=f8fafc&fontSize=40",
+  name: "Islam Azzam",
+  title: "Software Developer & Network Engineer",
+  tagline:
+    "Building crisp systems across web, apps, games, and telecommunications.",
+  bio: "Network & Telecom Engineering student with extensive experience in software development, game design, and embedded systems. 50+ projects spanning multiplayer games, autonomous vehicles, and full-stack applications. Led an autonomous vehicle to 2nd place at Shell Eco-Marathon Poland 2025.",
+  email: "snowydev7@gmail.com",
+  github: "https://github.com/Snowy7",
+  linkedin: "https://www.linkedin.com/in/islam-azzam-6a3449205/",
+  twitter: "https://twitter.com/snowy7x",
+  medium: "https://medium.com/@snowy7",
+  itch: "https://snowy7.itch.io",
+  location: "Doha, Qatar",
+  phone: "+974 74479336",
+  university: "University of Doha for Science and Technology (UDST)",
+  degree: "B.Sc. Electrical Engineering — Telecom & Networks",
 };
 
 export const projects: Project[] = [
   {
-    title: "CloudSync Dashboard",
+    title: "The Cube",
     description:
-      "A real-time cloud infrastructure monitoring dashboard with live metrics, alerting, and team collaboration features. Built with React, Node.js, and WebSockets.",
-    tags: ["React", "Node.js", "WebSocket", "PostgreSQL", "Docker"],
-    image: "https://picsum.photos/seed/cloudsync/800/500",
-    link: "https://cloudsync.example.dev",
-    github: "https://github.com/islam/cloudsync",
+      "Cooperative FPS where up to 4 players infiltrate procedurally generated office complexes in a high-stakes virtual heist. Dual timer system, reputation mechanics, and Steam integration.",
+    tags: ["Unity", "C#", "Multiplayer", "Steam", "Procedural Generation"],
+    image: "/images/projects/the-cube/cover.png",
+    links: [
+      { label: "Steam", url: "https://store.steampowered.com/app/3148890" },
+    ],
+    status: "In Development",
+    role: "Project Leader & Lead Programmer",
+    year: 2024,
+    featured: true,
   },
   {
-    title: "ShopFlow E-Commerce",
+    title: "Shell Eco-Marathon — 2nd Place",
     description:
-      "A full-featured e-commerce platform with cart management, Stripe payments, admin panel, and inventory tracking. Handles 10k+ daily transactions.",
-    tags: ["Next.js", "TypeScript", "Stripe", "MongoDB", "Redis"],
-    image: "https://picsum.photos/seed/shopflow/800/500",
-    link: "https://shopflow.example.dev",
-    github: "https://github.com/islam/shopflow",
+      "Autonomous Urban Concept vehicle that secured 2nd place at Shell Eco-Marathon Poland 2025. Full navigation, LiDAR obstacle avoidance, and precision parking with ±5cm accuracy.",
+    tags: ["Python", "C++", "ROS2", "LiDAR", "JETSON AGX"],
+    image: "/images/projects/shell-eco/cover.webp",
+    links: [
+      {
+        label: "Competition",
+        url: "https://www.shellecomarathon.com/2025-programme/autonomous-urban-concept.html",
+      },
+    ],
+    status: "Completed",
+    role: "Autonomous Team Leader",
+    year: 2025,
+    featured: true,
   },
   {
-    title: "DevConnect Social",
+    title: "Celestial Escape",
     description:
-      "A developer-focused social platform for sharing code snippets, articles, and collaborating on projects. Features real-time chat and markdown support.",
-    tags: ["Vue.js", "Express", "Socket.io", "MySQL", "AWS"],
-    image: "https://picsum.photos/seed/devconnect/800/500",
-    link: "https://devconnect.example.dev",
-    github: "https://github.com/islam/devconnect",
+      "3-day game jam project that won Best Quality award at Spoilz Game Studio jam. Space-themed puzzle adventure with polished mechanics, visuals, and audio.",
+    tags: ["Unity", "C#", "Shader Graph", "Game Jam"],
+    image: "/images/projects/celestial-escape/cover.png",
+    links: [{ label: "Play", url: "https://imhorror.itch.io/ce" }],
+    status: "Completed",
+    role: "Game Developer",
+    year: 2023,
+    featured: true,
   },
   {
-    title: "TaskForge PM Tool",
+    title: "Body Parts",
     description:
-      "An agile project management tool with Kanban boards, sprint planning, time tracking, and automated reporting for development teams.",
-    tags: ["Angular", "NestJS", "GraphQL", "PostgreSQL", "Terraform"],
-    image: "https://picsum.photos/seed/taskforge/800/500",
-    link: "https://taskforge.example.dev",
-    github: "https://github.com/islam/taskforge",
+      "Solo game jam entry that swept all major awards — Best Polish, Best Theme, and Most Fun at SGN Game Jam. Creative body-swapping mechanic with comedic elements.",
+    tags: ["Unity", "C#", "2D Animation", "Solo Dev"],
+    image: "/images/projects/body-parts/cover.png",
+    links: [
+      { label: "Play", url: "https://snowy7.itch.io/body-parts" },
+    ],
+    status: "Completed",
+    role: "Solo Developer",
+    year: 2022,
+    featured: true,
   },
   {
-    title: "HealthPulse API",
+    title: "Handyman Service App",
     description:
-      "A RESTful API platform for healthcare data management, supporting FHIR standards, real-time patient monitoring, and secure data exchange.",
-    tags: ["Python", "FastAPI", "Docker", "Kubernetes", "GCP"],
-    image: "https://picsum.photos/seed/healthpulse/800/500",
-    link: "https://healthpulse.example.dev",
-    github: "https://github.com/islam/healthpulse",
+      "Three-module service platform: user app for ordering services, worker app for fulfillment, and admin dashboard for management. Real-time matching and payment integration.",
+    tags: ["React Native", "Node.js", "MongoDB", "Firebase"],
+    image: "/images/projects/handyman/cover.jpg",
+    links: [],
+    status: "Completed",
+    role: "Full Stack Developer",
+    year: 2023,
+    featured: true,
   },
   {
-    title: "BudgetWise Finance",
+    title: "Bright Future Website",
     description:
-      "A personal finance tracker with AI-powered spending insights, budget planning, and visual analytics. Integrates with major banking APIs.",
-    tags: ["Svelte", "Go", "TensorFlow", "PostgreSQL", "Plaid"],
-    image: "https://picsum.photos/seed/budgetwise/800/500",
-    link: "https://budgetwise.example.dev",
-    github: "https://github.com/islam/budgetwise",
+      "Modern corporate landing page with responsive design, smooth Framer Motion animations, and professional presentation. SEO optimized.",
+    tags: ["Next.js", "React", "Tailwind", "Framer Motion"],
+    image: "/images/projects/brightfuture/cover.png",
+    links: [{ label: "Live", url: "https://brightfuture.qa" }],
+    status: "Live",
+    role: "Web Developer",
+    year: 2023,
+    featured: false,
+  },
+  {
+    title: "SGN Website",
+    description:
+      "Landing page for Saudi Game Network featuring event listings, workshop info, and community showcase. Gaming-themed dark mode design.",
+    tags: ["Next.js", "React", "Tailwind", "TypeScript"],
+    image: "/images/projects/sgn/cover.png",
+    links: [{ label: "Live", url: "https://saad-gn.netlify.app/" }],
+    status: "Live",
+    role: "Web Developer",
+    year: 2024,
+    featured: false,
+  },
+  {
+    title: "Almanadeeb Website",
+    description:
+      "Corporate landing page with professional design, service portfolio, contact form integration, and multi-language support (Arabic/English).",
+    tags: ["Next.js", "React", "Tailwind", "TypeScript"],
+    image: "/images/projects/almanadeeb/cover.png",
+    links: [{ label: "Live", url: "https://almanadeeb.com" }],
+    status: "Live",
+    role: "Web Developer",
+    year: 2023,
+    featured: false,
   },
 ];
 
 export const skills: Skill[] = [
-  { name: "TypeScript", level: 95, category: "Languages" },
+  // Programming Languages
+  { name: "C#", level: 95, category: "Languages" },
   { name: "JavaScript", level: 95, category: "Languages" },
-  { name: "Python", level: 85, category: "Languages" },
-  { name: "Go", level: 70, category: "Languages" },
-  { name: "React", level: 92, category: "Frontend" },
-  { name: "Vue.js", level: 90, category: "Frontend" },
-  { name: "Next.js", level: 88, category: "Frontend" },
-  { name: "Tailwind CSS", level: 93, category: "Frontend" },
-  { name: "Node.js", level: 90, category: "Backend" },
-  { name: "Express", level: 88, category: "Backend" },
-  { name: "NestJS", level: 80, category: "Backend" },
-  { name: "GraphQL", level: 82, category: "Backend" },
-  { name: "PostgreSQL", level: 87, category: "Database" },
-  { name: "MongoDB", level: 85, category: "Database" },
-  { name: "Redis", level: 78, category: "Database" },
-  { name: "Docker", level: 85, category: "DevOps" },
-  { name: "AWS", level: 80, category: "DevOps" },
-  { name: "CI/CD", level: 82, category: "DevOps" },
+  { name: "Python", level: 90, category: "Languages" },
+  { name: "C++", level: 80, category: "Languages" },
+  { name: "Java", level: 75, category: "Languages" },
+  { name: "SQL", level: 80, category: "Languages" },
+  // Game Development
+  { name: "Unity", level: 95, category: "Game Dev" },
+  { name: "Multiplayer Systems", level: 90, category: "Game Dev" },
+  { name: "Shader Programming", level: 85, category: "Game Dev" },
+  { name: "Game Design", level: 85, category: "Game Dev" },
+  { name: "Physics Simulation", level: 80, category: "Game Dev" },
+  // Web Development
+  { name: "React / Next.js", level: 90, category: "Web" },
+  { name: "Node.js", level: 90, category: "Web" },
+  { name: "Tailwind CSS", level: 85, category: "Web" },
+  { name: "HTML & CSS", level: 95, category: "Web" },
+  { name: "RESTful APIs", level: 85, category: "Web" },
+  // Engineering
+  { name: "Embedded Systems", level: 85, category: "Engineering" },
+  { name: "Autonomous Systems", level: 85, category: "Engineering" },
+  { name: "LiDAR / Sensors", level: 80, category: "Engineering" },
+  { name: "ROS2", level: 75, category: "Engineering" },
+  { name: "Circuit Design", level: 75, category: "Engineering" },
+  // Tools
+  { name: "Git & GitHub", level: 90, category: "Tools" },
+  { name: "Docker", level: 80, category: "Tools" },
+  { name: "React Native", level: 80, category: "Tools" },
+  { name: "Firebase", level: 75, category: "Tools" },
 ];
 
 export const experience: Experience[] = [
   {
-    role: "Senior Full Stack Developer",
-    company: "TechNova Solutions",
-    period: "2023 - Present",
+    role: "Project Leader & Lead Programmer",
+    company: "Limeless Inc.",
+    period: "Sep 2023 — Present",
+    location: "KSA (Remote)",
     description:
-      "Leading a team of 6 developers building enterprise SaaS products. Architected microservices handling 2M+ requests/day. Reduced deployment time by 70% through CI/CD optimization.",
+      "Leading development of multiplayer FPS 'The Cube' for Steam. Architected multiplayer networking with client-server architecture, created custom tools pipeline, and led team coordination for the flagship title.",
+    logo: "/images/companies/limeless.jpg",
   },
   {
-    role: "Full Stack Developer",
-    company: "DigitalCraft Agency",
-    period: "2021 - 2023",
+    role: "Autonomous Team Leader",
+    company: "Shell Eco-Marathon (UDST Team)",
+    period: "Nov 2024 — Jul 2025",
+    location: "Poland",
     description:
-      "Built 20+ client projects ranging from e-commerce platforms to healthcare dashboards. Introduced automated testing practices, achieving 90%+ code coverage across projects.",
+      "Led autonomous systems to 2nd place at Shell Eco-Marathon Poland 2025. Developed algorithms for navigation, obstacle avoidance, and parking. Integrated LiDAR and ultrasonic sensors with ±5cm precision.",
+    logo: "/images/companies/shell.svg",
   },
   {
-    role: "Frontend Developer",
-    company: "StartupHub Inc.",
-    period: "2020 - 2021",
+    role: "Events Head & Workshop Presenter",
+    company: "SGN (Saudi Game Network)",
+    period: "Oct 2022 — Jul 2024",
+    location: "Remote",
     description:
-      "Developed responsive web applications using React and Vue.js. Improved Core Web Vitals scores by 40% through performance optimization and modern build tooling.",
+      "Presented workshops on multiplayer game dev in Unity, computer graphics, and shaders. Hosted game competition finals and managed events for the gaming community.",
+    logo: "/images/companies/sgn.png",
+  },
+  {
+    role: "Web Developer",
+    company: "Bright Future",
+    period: "Oct 2021 — Oct 2023",
+    location: "Doha, Qatar",
+    description:
+      "Built websites, mobile apps, and backend servers for client businesses. Delivered full-stack solutions including the Afia healthcare site, BrightFuture corporate site, and CIRP organization platform.",
+    logo: "/images/companies/brightfuture.webp",
   },
 ];
 
@@ -148,57 +241,57 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
   {
-    title: "Why I Switched from REST to tRPC (and When I Didn't)",
+    title: "How We Got 2nd Place at Shell Eco-Marathon",
     excerpt:
-      "After years of building REST APIs, I gave tRPC a real shot on a production project. Here's what surprised me and where REST still wins.",
-    date: "Feb 12, 2026",
-    readTime: "6 min",
-    tags: ["TypeScript", "API Design"],
-    slug: "trpc-vs-rest",
-  },
-  {
-    title: "The CSS Trick That Changed How I Build Layouts",
-    excerpt:
-      "One line of CSS replaced 40 lines of JavaScript in my layout system. A deep dive into modern CSS subgrid and when to reach for it.",
-    date: "Jan 28, 2026",
-    readTime: "4 min",
-    tags: ["CSS", "Frontend"],
-    slug: "css-subgrid-layouts",
-  },
-  {
-    title: "Deploying at 2AM: Lessons from Production Incidents",
-    excerpt:
-      "Three war stories from real production outages, what went wrong, and the monitoring setup that now lets me sleep at night.",
-    date: "Jan 10, 2026",
+      "The story of building an autonomous vehicle from scratch — LiDAR integration, sensor fusion, and what went wrong (and right) during competition day.",
+    date: "Jul 2025",
     readTime: "8 min",
-    tags: ["DevOps", "War Stories"],
-    slug: "production-incidents",
+    tags: ["Autonomous", "Engineering"],
+    slug: "shell-eco-marathon",
   },
   {
-    title: "Building a CLI Tool in Go as a Node.js Developer",
+    title: "Multiplayer Networking in Unity: What I Learned",
     excerpt:
-      "What happens when a JavaScript developer tries Go for the first time. Spoiler: the error handling grew on me.",
-    date: "Dec 15, 2025",
+      "After shipping a co-op FPS, here are the hard lessons about client-server architecture, prediction, and why you should never trust the client.",
+    date: "Mar 2025",
+    readTime: "6 min",
+    tags: ["Unity", "Networking"],
+    slug: "unity-multiplayer",
+  },
+  {
+    title: "Winning 3 Awards in 72 Hours",
+    excerpt:
+      "A game jam postmortem on Body Parts — how scoping, polish, and a weird body-swapping mechanic swept Best Polish, Best Theme, and Most Fun.",
+    date: "Jan 2023",
     readTime: "5 min",
-    tags: ["Go", "CLI"],
-    slug: "go-cli-tool",
+    tags: ["Game Jam", "Postmortem"],
+    slug: "body-parts-postmortem",
+  },
+  {
+    title: "From React Native to Full Stack",
+    excerpt:
+      "Building a three-module service platform taught me more about architecture than any course. Here's how I structured the Handyman app.",
+    date: "Sep 2023",
+    readTime: "5 min",
+    tags: ["React Native", "Full Stack"],
+    slug: "handyman-architecture",
   },
 ];
 
 export const interests = [
+  "Game Development",
+  "Autonomous Systems",
+  "Multiplayer Networking",
   "Open Source",
-  "Mechanical Keyboards",
-  "Coffee Brewing",
-  "Hiking",
-  "Sci-Fi Books",
-  "Game Dev (hobby)",
-  "Photography",
-  "Chess",
+  "Embedded Systems",
+  "Competitive Gaming",
+  "3D Graphics & Shaders",
+  "Robotics",
 ];
 
 export const currentlyDoing = {
-  reading: "Designing Data-Intensive Applications",
-  learning: "Rust & WebAssembly",
-  building: "A real-time collaboration engine",
-  listening: "Lo-fi hip hop, obviously",
+  reading: "Game Engine Architecture by Jason Gregory",
+  learning: "ROS2 & Advanced Sensor Fusion",
+  building: "The Cube — multiplayer FPS for Steam",
+  listening: "Lo-fi beats & game soundtracks",
 };

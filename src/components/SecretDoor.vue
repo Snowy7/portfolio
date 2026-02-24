@@ -32,6 +32,7 @@
                 The Other Side
               </h2>
               <p class="text-sm text-white/30">You found the hidden room. Here's the stuff that didn't fit on the main page.</p>
+              <p class="text-[10px] text-white/15 mt-1">a.k.a. Snowy7</p>
             </div>
 
             <!-- Personal grid -->
@@ -40,12 +41,12 @@
               <div class="bg-white/[0.03] backdrop-blur-sm border border-white/[0.06] rounded-xl p-6 space-y-3">
                 <p class="text-[10px] tracking-[0.3em] uppercase text-green-400/50">The human</p>
                 <div class="space-y-2 text-xs text-white/50">
-                  <p>&#x2615; Coffee order: Pour-over, single origin, black</p>
-                  <p>&#x2328; Daily driver: Tofu65 with Gateron Ink Blacks</p>
-                  <p>&#x265f; Chess rating: ~1200 (I said I play, not that I'm good)</p>
-                  <p>&#x1f4da; All-time fav book: Dune by Frank Herbert</p>
-                  <p>&#x1f3ae; Game I keep going back to: Hollow Knight</p>
-                  <p>&#x1f431; Cat person, obviously</p>
+                  <p>&#x1f3ae; Started coding with game modding at 13</p>
+                  <p>&#x1f3d7; 50+ projects shipped across games, web, and hardware</p>
+                  <p>&#x1f30d; Based in Doha, Qatar</p>
+                  <p>&#x1f393; Studying Telecom & Network Engineering at UDST</p>
+                  <p>&#x1f3c6; Led autonomous vehicle to 2nd place internationally</p>
+                  <p>&#x1f579; Snowy7 on every platform</p>
                 </div>
               </div>
 
@@ -53,11 +54,11 @@
               <div class="bg-white/[0.03] backdrop-blur-sm border border-white/[0.06] rounded-xl p-6 space-y-3">
                 <p class="text-[10px] tracking-[0.3em] uppercase text-green-400/50">Hot takes</p>
                 <div class="space-y-2 text-xs text-white/50">
-                  <p>&#x1f525; Tabs > Spaces (fight me)</p>
-                  <p>&#x1f525; Dark mode is the only mode</p>
-                  <p>&#x1f525; TypeScript is worth the setup cost</p>
-                  <p>&#x1f525; Most "senior" devs are just better at Googling</p>
-                  <p>&#x1f525; CSS is a real programming language</p>
+                  <p>&#x1f525; Unity > Unreal for small teams</p>
+                  <p>&#x1f525; Game jams teach more than bootcamps</p>
+                  <p>&#x1f525; C# is the best language, no debate</p>
+                  <p>&#x1f525; You don't need a CS degree to ship great software</p>
+                  <p>&#x1f525; Autonomous vehicles are basically giant robots</p>
                   <p>&#x1f525; The best code is the code you delete</p>
                 </div>
               </div>
@@ -66,9 +67,9 @@
               <div class="bg-white/[0.03] backdrop-blur-sm border border-white/[0.06] rounded-xl p-6 space-y-3">
                 <p class="text-[10px] tracking-[0.3em] uppercase text-green-400/50">Origin story</p>
                 <div class="space-y-2 text-xs text-white/50 leading-relaxed">
-                  <p>First line of code: a GeoCities page in 2008. It had a visitor counter, a guestbook, and way too many animated GIFs.</p>
-                  <p>Favorite bug I ever fixed: an off-by-one in a leap year calculator that only broke on Feb 29. Took 3 hours to find.</p>
-                  <p>I can solve a Rubik's cube in under 2 minutes. Not fast by speedcubing standards, but it impresses at parties.</p>
+                  <p>Started with Unity tutorials at 13. First "game" was a cube that jumped. Showed it to everyone like I'd built Minecraft.</p>
+                  <p>Won 3 game jam awards with Body Parts — a solo project made in 72 hours on caffeine and determination.</p>
+                  <p>Built an autonomous car that drove itself in Poland. Debugging LiDAR data at 3 AM in a foreign country hits different.</p>
                 </div>
               </div>
 
@@ -76,13 +77,13 @@
               <div class="bg-white/[0.03] backdrop-blur-sm border border-white/[0.06] rounded-xl p-6 space-y-3">
                 <p class="text-[10px] tracking-[0.3em] uppercase text-green-400/50">On repeat</p>
                 <div class="space-y-2 text-xs text-white/50">
-                  <p>&#x1f3b5; Tycho - Dive (whole album)</p>
-                  <p>&#x1f3b5; Khruangbin - Time (You and I)</p>
+                  <p>&#x1f3b5; Game soundtracks (Hollow Knight, Celeste)</p>
+                  <p>&#x1f3b5; Lo-fi beats to code/relax to</p>
                   <p>&#x1f3b5; Nujabes - Feather</p>
-                  <p>&#x1f3b5; Bonobo - Kerala</p>
-                  <p>&#x1f3b5; Tame Impala - Let It Happen</p>
+                  <p>&#x1f3b5; Hans Zimmer - anything, really</p>
+                  <p>&#x1f3b5; Arabic classics when nostalgic</p>
                 </div>
-                <p class="text-[10px] text-white/20 mt-2">Mostly lo-fi, jazz, and "music to code to"</p>
+                <p class="text-[10px] text-white/20 mt-2">Mostly game OSTs and lo-fi while coding</p>
               </div>
             </div>
 
@@ -96,7 +97,7 @@
 
             <!-- Footer -->
             <div class="text-center space-y-2">
-              <p class="text-xs text-white/20">This site has {{ pageCount }} design variations. You're looking at V20.</p>
+              <p class="text-xs text-white/20">Built with Astro + Vue + Tailwind. Crafted with way too many iterations.</p>
               <p class="text-[10px] text-white/10">Thanks for exploring. You're the curious type — that's rare.</p>
             </div>
           </div>
@@ -118,10 +119,10 @@ let clickTimer: ReturnType<typeof setTimeout> | null = null;
 let raf = 0;
 
 const stats = [
-  { value: "5+", label: "Years coding" },
-  { value: "20+", label: "Projects shipped" },
-  { value: "∞", label: "Cups of coffee" },
-  { value: "1", label: "Rubik's cube" },
+  { value: "50+", label: "Projects shipped" },
+  { value: "4+", label: "Years coding" },
+  { value: "4", label: "Game jam awards" },
+  { value: "2nd", label: "Shell Eco-Marathon" },
 ];
 
 function handleClick() {
