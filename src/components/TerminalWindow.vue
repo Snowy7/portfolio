@@ -316,7 +316,7 @@ const commands: Record<string, () => string[]> = {
     "  Email    → snowydev7@gmail.com",
     "  GitHub   → github.com/Snowy7",
     "  LinkedIn → linkedin.com/in/islam-azzam-6a3449205",
-    "  Itch.io  → snowy7.itch.io",
+    "  Itch.io  → snowy77x.itch.io",
     "  Twitter  → twitter.com/snowy7x",
     "",
   ],
