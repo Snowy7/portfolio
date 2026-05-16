@@ -1,0 +1,385 @@
+---
+title: "Shaders Explained: From Pixels to Visual Effects"
+excerpt: "An interactive intro to GPU shaders for game devs — what they are, how the pipeline works, and how the same five ideas power Unity, Blender, and any engine you'll touch."
+date: "May 2026"
+readTime: "18 min"
+tags: ["Shaders", "GLSL", "Unity", "Blender", "Interactive"]
+published: true
+---
+
+import ShaderPlayground from "../../components/ShaderPlayground.vue";
+import PipelineDiagram from "../../components/diagrams/PipelineDiagram.astro";
+import CpuVsGpu from "../../components/diagrams/CpuVsGpu.astro";
+import ShaderGraphDiagram from "../../components/diagrams/ShaderGraphDiagram.astro";
+import BlenderNodesDiagram from "../../components/diagrams/BlenderNodesDiagram.astro";
+
+import hookWaterVert from "../../shaders/hook-water.vert.glsl?raw";
+import hookWaterFrag from "../../shaders/hook-water.frag.glsl?raw";
+import hookHologramFrag from "../../shaders/hook-hologram.frag.glsl?raw";
+import hookDissolveFrag from "../../shaders/hook-dissolve.frag.glsl?raw";
+import hookToonVert from "../../shaders/hook-toon.vert.glsl?raw";
+import hookToonFrag from "../../shaders/hook-toon.frag.glsl?raw";
+
+import solidColor from "../../shaders/01-solid-color.frag.glsl?raw";
+import uvGradient from "../../shaders/02-uv-gradient.frag.glsl?raw";
+import animated from "../../shaders/03-animated.frag.glsl?raw";
+import dissolve from "../../shaders/04-dissolve.frag.glsl?raw";
+import sphereVert from "../../shaders/05-vertex-sphere.vert.glsl?raw";
+import sphereFrag from "../../shaders/05-vertex-sphere.frag.glsl?raw";
+
+import vertexIntroVert from "../../shaders/vertex-intro.vert.glsl?raw";
+import vertexIntroFrag from "../../shaders/vertex-intro.frag.glsl?raw";
+import fragmentIntro from "../../shaders/fragment-intro.frag.glsl?raw";
+import textureChecker from "../../shaders/texture-checker.frag.glsl?raw";
+
+## All of these are shaders.
+
+<div class="not-prose grid grid-cols-2 gap-3 my-6">
+  <ShaderPlayground client:only="vue" canvasOnly mode="water" title="water" height={160} vertex={hookWaterVert} fragment={hookWaterFrag} />
+  <ShaderPlayground client:only="vue" canvasOnly mode="cube" title="hologram" height={160} fragment={hookHologramFrag} />
+  <ShaderPlayground client:only="vue" canvasOnly mode="cube" title="dissolve" height={160} fragment={hookDissolveFrag} />
+  <ShaderPlayground client:only="vue" canvasOnly mode="sphere" title="toon" height={160} vertex={hookToonVert} fragment={hookToonFrag} />
+</div>
+
+Water, holograms, dissolves, toon shading — all four panels above are just small GLSL programs running on your GPU right now. By the end of this post you'll understand how each one works, and you'll have written and edited them yourself.
+
+## 1. What is a shader?
+
+> A shader is a small program that runs on the GPU and controls how something is drawn.
+
+Every pixel of your game, every wobble of water, every glow on a sword — it's a shader deciding "for _this_ specific pixel of _this_ specific surface, what color comes out?"
+
+## 2. CPU vs GPU
+
+Gameplay code runs on the CPU. Shaders run on the GPU. The two chips are built for completely different jobs.
+
+<CpuVsGpu />
+
+A 1080p screen has over 2 million pixels. The fragment shader runs once for every one of them, every frame. That parallelism is why effects that would be impossibly slow on a CPU — animated noise, real-time lighting, blur — feel instant on a GPU.
+
+## 3. The rendering pipeline
+
+When the engine draws a mesh, the GPU walks it through a [fixed sequence of stages](https://wikis.khronos.org/opengl/Rendering_Pipeline_Overview). You don't write all of them — only the two stages in green are user-programmable.
+
+<PipelineDiagram />
+
+Two programmable stages. Two jobs. That's it. Every game engine — Unity, Unreal, Godot, custom — exposes those two stages under different names but they do the same work.
+
+## 4. Vertex shader: moves points
+
+The [vertex shader](https://wikis.khronos.org/opengl/Vertex_Shader) runs **once per vertex** of your mesh. Its job is to decide where each point ends up — and along the way it can move, bend, inflate, or animate the geometry.
+
+Below: a sphere where every vertex gets pushed along its normal by a sine wave that varies across the surface. Open the **vertex.glsl** tab and tweak the math.
+
+<ShaderPlayground
+  client:only="vue"
+  mode="sphere"
+  showVertex
+  title="vertex shader · pulsing sphere"
+  height={320}
+  uniforms={[
+    { name: "uAmp", type: "float", value: 0.18, min: 0, max: 0.5, step: 0.01, label: "amplitude" },
+    { name: "uFreq", type: "float", value: 3.0, min: 0.5, max: 10, step: 0.1, label: "frequency" },
+    { name: "uColor", type: "color", value: "#22c55e", label: "color" },
+  ]}
+  vertex={vertexIntroVert}
+  fragment={vertexIntroFrag}
+/>
+
+Typical jobs for the vertex shader in a game:
+
+- Water and ocean surfaces
+- Grass and foliage swaying in wind
+- Character squash-and-stretch
+- Skinning bones to skinned meshes
+- Banner flags rippling
+
+## 5. Fragment shader: colors pixels
+
+The [fragment shader](https://wikis.khronos.org/opengl/Fragment_Shader) runs **once per pixel** the rasterizer produced. Its job is to output a color — and that's where most of the visual variety lives.
+
+Below: a fragment shader that paints each pixel by the direction its surface faces. The cube has six normals, so it gets six colors. Try replacing `vNormal` with `vec3(vUv, 0.5)` to see what UV-based coloring looks like.
+
+<ShaderPlayground
+  client:only="vue"
+  mode="cube"
+  title="fragment shader · normals as color"
+  height={320}
+  fragment={fragmentIntro}
+/>
+
+Typical jobs for the fragment shader:
+
+- Sampling textures (albedo, normal, roughness…)
+- Lighting and shading models (Lambert, Blinn-Phong, PBR)
+- Glows, holograms, dissolves
+- Patterns, stripes, gradients
+- Outlines, toon shading
+- Heat haze, glitches, screen-space FX
+
+**Vertex shaders change shape. Fragment shaders change color.** They run as a pair for every draw call.
+
+## 6. Five concepts you have to know
+
+Every shader you'll ever write or read is built on the same handful of ideas:
+
+- **UVs** — where on the surface this pixel is
+- **Normals** — which way the surface is facing
+- **Textures** — images sampled inside the shader
+- **Time** — a uniform that increments each frame, the source of all animation
+- **Uniforms** — values your app sends in (color, speed, threshold, anything)
+
+Let's hit the ones that come up most often.
+
+## 7. UVs and textures
+
+`vUv` is a `vec2` that goes from `(0, 0)` at the bottom-left of the surface to `(1, 1)` at the top-right. It's how the shader knows _where on the surface_ this pixel is.
+
+Map it straight into RGB and you instantly see what the GPU sees — each face of the cube has its own 0..1 UV range, so each face gets its own gradient:
+
+<ShaderPlayground client:only="vue" mode="cube" title="uv gradient" height={280} fragment={uvGradient} />
+
+Try replacing `vUv.y` with `1.0 - vUv.y` and watch the picture flip. The shader doesn't have any concept of "up" — it just runs your math.
+
+### Textures
+
+In a real game, you almost never compute colors from scratch — you sample a texture (an image baked by an artist) at the same `vUv`:
+
+```glsl
+uniform sampler2D uTexture;
+varying vec2 vUv;
+
+void main() {
+  vec3 col = texture2D(uTexture, vUv).rgb;
+  gl_FragColor = vec4(col, 1.0);
+}
+```
+
+That single `texture2D` call is the workhorse of game graphics. Diffuse maps, normal maps, roughness maps, masks, lookup tables — all just `texture2D(map, uv)`.
+
+The playground below doesn't load a real PNG (we're in a browser), but it computes a checkerboard pattern directly from `vUv` — exactly the way a texture lookup would feel. Edit `uTiles` or swap the math to see the UV→pattern mapping:
+
+<ShaderPlayground
+  client:only="vue"
+  mode="cube"
+  title="textures · procedural checker"
+  height={300}
+  uniforms={[
+    { name: "uTiles", type: "float", value: 8.0, min: 1, max: 32, step: 1, label: "tiles" },
+    { name: "uColorA", type: "color", value: "#0a0a0a", label: "color a" },
+    { name: "uColorB", type: "color", value: "#e2e8f0", label: "color b" },
+  ]}
+  fragment={textureChecker}
+/>
+
+In production, you'd replace the procedural math with one `texture2D` call. The shader doesn't know or care where the colors come from — image, math, screen capture, render target — same `vec4` out the other end.
+
+## 8. Time
+
+Shaders don't have a scene graph or keyframes. Animation comes from one uniform: `uTime` (seconds since start). Feed it into `sin()` and you get a smooth oscillation between -1 and 1. Remap that to 0..1 and you can drive anything — color, position, glow strength.
+
+<ShaderPlayground
+  client:only="vue"
+  mode="cube"
+  title="animated gradient"
+  height={300}
+  uniforms={[
+    { name: "uSpeed", type: "float", value: 1.0, min: 0, max: 5, step: 0.05, label: "speed" },
+    { name: "uFreq",  type: "float", value: 8.0, min: 1, max: 30, step: 0.1, label: "freq" },
+    { name: "uColorA", type: "color", value: "#00ffff", label: "color a" },
+    { name: "uColorB", type: "color", value: "#ff00ff", label: "color b" },
+  ]}
+  fragment={animated}
+/>
+
+The sliders are uniforms — values pushed from the CPU into the shader each frame. Notice they update the visual without recompiling; only editing the code triggers a rebuild.
+
+## 9. Noise
+
+Most "magical-looking" effects — lava, dissolve, smoke, water, clouds — are noise plus a threshold.
+
+The shader below uses [**value noise**](https://thebookofshaders.com/11/) plus [**FBM**](https://thebookofshaders.com/13/) (Fractional Brownian Motion — summing several octaves of noise at increasing frequencies). The single-octave version on its own looks blocky; FBM is what gives it that organic, cloudy quality. The same pattern is how Perlin and Simplex noise are used in production — different base function, same multi-octave trick on top.
+
+Drag the **dissolve** slider from 0 to 1 and watch the cube eat itself face by face:
+
+<ShaderPlayground
+  client:only="vue"
+  mode="cube"
+  title="noise dissolve · fbm"
+  height={320}
+  uniforms={[
+    { name: "uThreshold", type: "float", value: 0.5, min: 0, max: 1, step: 0.01, label: "dissolve" },
+    { name: "uScale", type: "float", value: 4.5, min: 1, max: 20, step: 0.1, label: "scale" },
+    { name: "uEdge", type: "color", value: "#fbbf24", label: "edge" },
+    { name: "uBase", type: "color", value: "#1e293b", label: "base" },
+  ]}
+  fragment={dissolve}
+/>
+
+The pattern is universal: **noise → compare to threshold → discard or color**. That's enemy death effects, teleports, portal fades, magic shields — all the same recipe with different noise and different colors.
+
+## 10. Vertex animation: a bigger example
+
+Vertex shaders aren't just for waves. Stack a few sines together and a smooth sphere becomes a breathing alien blob:
+
+<ShaderPlayground
+  client:only="vue"
+  mode="sphere"
+  showVertex
+  title="vertex displacement · sphere"
+  height={340}
+  uniforms={[
+    { name: "uAmp", type: "float", value: 0.15, min: 0, max: 0.5, step: 0.01, label: "amplitude" },
+    { name: "uFreq", type: "float", value: 4.0, min: 1, max: 12, step: 0.1, label: "frequency" },
+    { name: "uSpeed", type: "float", value: 1.2, min: 0, max: 4, step: 0.05, label: "speed" },
+    { name: "uColor", type: "color", value: "#22c55e", label: "color" },
+  ]}
+  vertex={sphereVert}
+  fragment={sphereFrag}
+/>
+
+Click the **vertex.glsl** tab and look at the key line:
+
+```glsl
+vec3 displaced = position + normal * wave * uAmp;
+```
+
+That's water. Or flags, or grass, or jelly. Same idea, different mesh, different amplitude.
+
+## 11. In Unity: Shader Graph
+
+Unity ships two ways to write shaders. The high-level one is **Shader Graph** — a node-based editor where you wire boxes together instead of typing code. The same dissolve effect from §9 looks like this:
+
+<ShaderGraphDiagram />
+
+Properties exposed to the inspector (so designers can tune the effect without touching the graph):
+
+- `DissolveAmount` — float, animated by the Animator or VFX Graph
+- `EdgeColor` — color of the glowing rim
+- `EdgeWidth` — how soft the edge is
+- `NoiseScale` — bigger = finer pattern
+
+In a game, you'd assign this material to your enemy mesh, then drive `DissolveAmount` from a death state machine (`0` alive → animate to `1` over 0.6s on hit-kill). The dissolve itself is just Unity's [Alpha Clip Threshold](https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@15.0/manual/Alpha-Clipping.html) doing the discard work. Shader Graph is fantastic for designers and rapid iteration; you give up some performance control compared to hand-written HLSL.
+
+## 12. In Unity: hand-written HLSL
+
+For tight performance work or things Shader Graph can't express, you drop into **ShaderLab + HLSL**. Looks intimidating, but it's all chrome around two functions — `vert` and `frag`:
+
+```c
+Shader "Custom/PulsingEmissive" {
+    Properties {
+        _ColorA ("Color A", Color) = (0, 1, 1, 1)
+        _ColorB ("Color B", Color) = (1, 0, 1, 1)
+        _Speed  ("Speed",   Float) = 2
+    }
+    SubShader {
+        Tags { "RenderType" = "Opaque" }
+        Pass {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+
+            fixed4 _ColorA, _ColorB;
+            float  _Speed;
+
+            struct appdata { float4 vertex : POSITION; };
+            struct v2f     { float4 vertex : SV_POSITION; };
+
+            v2f vert(appdata v) {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                return o;
+            }
+
+            fixed4 frag(v2f i) : SV_Target {
+                float pulse = sin(_Time.y * _Speed) * 0.5 + 0.5;
+                return lerp(_ColorA, _ColorB, pulse);
+            }
+            ENDCG
+        }
+    }
+}
+```
+
+A few Unity-specific bits to know:
+
+- **`Properties`** declares what shows up in the material inspector. Designers tune these in the editor without touching code.
+- **`_Time.y`** is Unity's per-frame time uniform — same as `uTime` everywhere else.
+- **`UnityObjectToClipPos`** is the standard MVP transform helper.
+- **`fixed4`** is a low-precision color type for mobile/console performance.
+
+Save this as `.shader`, assign it to a `Material`, drop the material on any mesh. Pulses cyan→magenta forever. That's an entire visual effect in 30 lines.
+
+For vertex animation (waves, wind, etc.), you'd return a modified `o.vertex` from `vert()` — same recipe as the playgrounds above, just in HLSL.
+
+## 13. In Blender: shader nodes
+
+Blender uses [shader nodes](https://docs.blender.org/manual/en/latest/render/shader_nodes/index.html) too, but for offline rendering rather than runtime games. A procedural lava material is just:
+
+<BlenderNodesDiagram />
+
+Suggested values to get convincing lava:
+
+- Noise scale: 8–15
+- Noise detail: 10
+- ColorRamp dark stop: black / dark red
+- ColorRamp bright stop: orange / yellow
+- Emission strength: 1.5–4
+
+If you ever export pre-rendered VFX (cutscenes, key art, marketing renders), Blender's the cheapest way to do it. Same mental model as Shader Graph; different target.
+
+## 14. Same idea, different toolchains
+
+| Tool | How you write | Best for |
+|------|---------------|----------|
+| **Unity Shader Graph** | Visual nodes | Designer-friendly, rapid iteration |
+| **Unity HLSL** | Code in ShaderLab | Performance, anything graph can't do |
+| **Unreal Material Editor** | Visual nodes | Same role as Shader Graph |
+| **Godot Shader / Visual Shader** | GLSL-ish code or nodes | Open-source, simpler material model |
+| **Blender** | Material nodes | Offline rendering, look-dev |
+
+Different syntax, identical mental model. UVs in, math in the middle, color out. Once you've internalized the recipe, switching engines is mostly switching dialects.
+
+## 15. Where to go next
+
+Once you're comfortable with the five ingredients — **UVs, time, noise, textures, normals** — most "advanced" shader effects start looking like remixes of the same handful of tricks:
+
+- **Fresnel rim light**: `pow(1.0 - dot(normal, viewDir), 3.0)` → hologram, energy shields.
+- **Scrolling UVs**: `texture2D(tex, vUv + vec2(uTime * 0.1, 0.0))` → conveyor belts, waterfalls, lava flow.
+- **Layered noise (FBM)**: sum multiple noise octaves at increasing frequencies → realistic clouds, terrain, smoke.
+- **Screen-space effects**: read the previous frame's pixel and distort UVs → heat haze, glitch, CRT.
+
+## 16. Further reading
+
+### Pipeline & fundamentals
+
+- [Khronos Wiki — Rendering Pipeline Overview](https://wikis.khronos.org/opengl/Rendering_Pipeline_Overview) — authoritative reference for how the stages connect.
+- [Khronos Wiki — Vertex Shader](https://wikis.khronos.org/opengl/Vertex_Shader) and [Fragment Shader](https://wikis.khronos.org/opengl/Fragment_Shader) — exactly what each programmable stage does.
+- [Stanford EE267 — Graphics Pipeline (PDF)](https://stanford.edu/class/ee267/lectures/lecture4.pdf) — clean academic walk-through with the canonical pipeline diagrams.
+- [LearnOpenGL — Shaders chapter](https://learnopengl.com/Getting-started/Shaders) — best free progressive intro, OpenGL/GLSL focused.
+
+### Noise & procedural patterns
+
+- [The Book of Shaders — Noise](https://thebookofshaders.com/11/) and [Fractal Brownian Motion](https://thebookofshaders.com/13/) — the chapters that the dissolve in §9 is built on. Patricio Gonzalez Vivo's free interactive book.
+- [Inigo Quilez — articles](https://iquilezles.org/articles/) — the bible for procedural shader tricks: raymarching, signed distance functions, noise variants, FBM, lighting math.
+- [Shadertoy](https://www.shadertoy.com/) — live gallery of GLSL shaders with editable source. Reading other people's code is how you level up.
+
+### Game engines
+
+- [Unity ShaderLab — Reference](https://docs.unity3d.com/Manual/SL-Reference.html) — full syntax around the HLSL in §12.
+- [Unity HDRP — Alpha Clipping](https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@15.0/manual/Alpha-Clipping.html) — the mechanism behind the dissolve from §11.
+- [Blender Manual — Shader Nodes](https://docs.blender.org/manual/en/latest/render/shader_nodes/index.html) — every node in §13's lava graph, with parameters.
+
+### Three.js (what the playgrounds run on)
+
+- [Three.js — ShaderMaterial](https://threejs.org/docs/#api/en/materials/ShaderMaterial) — the JS↔GLSL bridge used by every interactive panel above.
+- [Three.js documentation](https://threejs.org/docs/) — the rest of the library if you want to recreate the playgrounds yourself.
+
+## 17. The takeaway
+
+> A shader is not magic. It's code that runs for vertices or pixels.
+
+Once you internalize that, the rest is recipe collecting. UVs, time, noise, textures, color math, lighting — combine four of them creatively and you can build almost anything you've ever seen in a game.
+
+The playgrounds above are real GLSL talking to real WebGL — no sandbox, no transpilation. The same lines of code work, character-for-character, in Godot's GLSL shaders and translate one-for-one into Unity HLSL or Unreal HLSL. Break things. That's how you learn what each line is actually doing.

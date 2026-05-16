@@ -393,10 +393,9 @@ const commands: Record<string, () => string[]> = {
   blog: () => [
     "",
     '<span class="text-green-400">Recent:</span>',
-    '  <span class="text-white">Shell Eco-Marathon</span>  <span class="text-[#555]">8m</span>',
-    '  <span class="text-white">Multiplayer Networking</span>  <span class="text-[#555]">6m</span>',
-    '  <span class="text-white">3 Awards in 72 Hours</span>  <span class="text-[#555]">5m</span>',
-    '  <span class="text-white">React Native to Full Stack</span>  <span class="text-[#555]">5m</span>',
+    '  <span class="text-white">Shaders Explained</span>  <span class="text-[#555]">12m</span>',
+    "",
+    '  → <a href="/blog" class="text-green-400 underline">All posts</a>',
     "",
   ],
   contact: () => [

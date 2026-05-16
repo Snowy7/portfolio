@@ -9,10 +9,19 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/mdx": "^4.3.14",
     "@astrojs/vue": "^5.1.4",
+    "@codemirror/commands": "^6.10.3",
+    "@codemirror/lang-cpp": "^6.0.3",
+    "@codemirror/language": "^6.12.3",
+    "@codemirror/state": "^6.6.0",
+    "@codemirror/view": "^6.43.0",
+    "@lezer/highlight": "^1.2.3",
     "@tailwindcss/vite": "^4.2.1",
     "astro": "^5.17.1",
+    "codemirror": "^6.0.2",
     "tailwindcss": "^4.2.1",
+    "three": "^0.184.0",
     "vue": "^3.5.29"
   },
   "devDependencies": {

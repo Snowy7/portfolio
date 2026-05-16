@@ -55,7 +55,10 @@ const { Content } = await render(post);
           </header>
 
           <!-- Content -->
-          <div data-animate="boot-3" class="prose-terminal">
+          <!-- No data-animate here: AppShell is client:only and its Vue hydration -->
+          <!-- re-renders this slot, which would clobber any .animate class applied -->
+          <!-- by the inline boot script and leave content stuck at opacity:0. -->
+          <div class="prose-terminal">
             {post.body && post.body.trim().length > 0 ? (
               <Content />
             ) : (

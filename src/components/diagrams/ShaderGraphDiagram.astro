@@ -1,0 +1,122 @@
+---
+// Stylized Unity Shader Graph: dissolve material.
+// Five nodes laid out left → right, with the Edge Color branch dropping below
+// into an Emission node. Connections are cubic bezier curves between sockets.
+---
+
+<figure class="my-8 not-prose">
+  <div class="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl p-4 sm:p-6 overflow-x-auto">
+    <svg
+      viewBox="0 0 760 320"
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-full h-auto min-w-[680px]"
+      role="img"
+      aria-label="Shader Graph dissolve material: UV, Noise, Smoothstep, Alpha Clip Threshold, Edge Color, Emission"
+    >
+      <defs>
+        <linearGradient id="sgHeader" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="#1d1d1d" />
+          <stop offset="1" stop-color="#151515" />
+        </linearGradient>
+        <linearGradient id="sgHeaderActive" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="rgba(34, 197, 94, 0.25)" />
+          <stop offset="1" stop-color="rgba(34, 197, 94, 0.10)" />
+        </linearGradient>
+      </defs>
+
+      <!-- Bezier connections, drawn first so they sit behind the nodes.
+           Each path goes from an output socket (right edge of a node) into
+           an input socket (left edge of the next node). -->
+      <g fill="none" stroke="rgba(34, 197, 94, 0.55)" stroke-width="1.5">
+        <!-- UV → Noise -->
+        <path d="M 110 110 C 145 110, 145 110, 180 110" />
+        <!-- Noise → Smoothstep -->
+        <path d="M 310 110 C 345 110, 345 110, 380 110" />
+        <!-- Smoothstep → Alpha Clip -->
+        <path d="M 510 110 C 545 110, 545 110, 580 110" />
+        <!-- Smoothstep → Emission (branch down) -->
+        <path d="M 510 130 C 545 130, 545 220, 580 220" />
+        <!-- Edge Color → Emission -->
+        <path d="M 540 240 C 560 240, 560 235, 580 235" />
+      </g>
+
+      <!-- ───────── UV node ───────── -->
+      <g>
+        <rect x="20" y="85" width="90" height="50" rx="6" fill="#0e0e0e" stroke="#2a2a2a" stroke-width="1"/>
+        <rect x="20" y="85" width="90" height="16" rx="6" fill="url(#sgHeader)"/>
+        <rect x="20" y="95" width="90" height="6" fill="url(#sgHeader)"/>
+        <text x="65" y="96" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#bbb" font-weight="600">UV</text>
+        <text x="65" y="123" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#666">surface coord</text>
+        <circle cx="110" cy="110" r="4" fill="#22c55e" stroke="#0a0a0a" stroke-width="1.5"/>
+      </g>
+
+      <!-- ───────── Simple Noise node ───────── -->
+      <g>
+        <rect x="180" y="80" width="130" height="60" rx="6" fill="#0e0e0e" stroke="#2a2a2a" stroke-width="1"/>
+        <rect x="180" y="80" width="130" height="16" rx="6" fill="url(#sgHeader)"/>
+        <rect x="180" y="90" width="130" height="6" fill="url(#sgHeader)"/>
+        <text x="245" y="91" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#bbb" font-weight="600">Simple Noise</text>
+        <text x="245" y="113" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#888">in: UV</text>
+        <text x="245" y="128" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#888">scale: 12</text>
+        <circle cx="180" cy="110" r="4" fill="#22c55e" stroke="#0a0a0a" stroke-width="1.5"/>
+        <circle cx="310" cy="110" r="4" fill="#22c55e" stroke="#0a0a0a" stroke-width="1.5"/>
+      </g>
+
+      <!-- ───────── Smoothstep node ───────── -->
+      <g>
+        <rect x="380" y="80" width="130" height="70" rx="6" fill="#0e0e0e" stroke="#2a2a2a" stroke-width="1"/>
+        <rect x="380" y="80" width="130" height="16" rx="6" fill="url(#sgHeader)"/>
+        <rect x="380" y="90" width="130" height="6" fill="url(#sgHeader)"/>
+        <text x="445" y="91" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#bbb" font-weight="600">Smoothstep</text>
+        <text x="445" y="113" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#888">edge1: t - 0.04</text>
+        <text x="445" y="128" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#888">edge2: t + 0.05</text>
+        <text x="445" y="143" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#888">in: noise</text>
+        <circle cx="380" cy="110" r="4" fill="#22c55e" stroke="#0a0a0a" stroke-width="1.5"/>
+        <circle cx="510" cy="110" r="4" fill="#22c55e" stroke="#0a0a0a" stroke-width="1.5"/>
+        <circle cx="510" cy="130" r="4" fill="#22c55e" stroke="#0a0a0a" stroke-width="1.5"/>
+      </g>
+
+      <!-- ───────── Alpha Clip Threshold node (output) ───────── -->
+      <g>
+        <rect x="580" y="80" width="160" height="60" rx="6" fill="rgba(34,197,94,0.05)" stroke="#22c55e" stroke-width="1.2"/>
+        <rect x="580" y="80" width="160" height="16" rx="6" fill="url(#sgHeaderActive)"/>
+        <rect x="580" y="90" width="160" height="6" fill="url(#sgHeaderActive)"/>
+        <text x="660" y="91" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#22c55e" font-weight="600">Alpha Clip Threshold</text>
+        <text x="660" y="113" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#888">discard if below</text>
+        <text x="660" y="128" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#22c55e" font-weight="600">→ master node</text>
+        <circle cx="580" cy="110" r="4" fill="#22c55e" stroke="#0a0a0a" stroke-width="1.5"/>
+      </g>
+
+      <!-- ───────── Edge Color node ───────── -->
+      <g>
+        <rect x="420" y="215" width="120" height="50" rx="6" fill="#0e0e0e" stroke="#2a2a2a" stroke-width="1"/>
+        <rect x="420" y="215" width="120" height="16" rx="6" fill="url(#sgHeader)"/>
+        <rect x="420" y="225" width="120" height="6" fill="url(#sgHeader)"/>
+        <text x="480" y="226" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#bbb" font-weight="600">Color</text>
+        <rect x="430" y="240" width="50" height="18" rx="3" fill="#fbbf24" />
+        <text x="510" y="252" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#666">#fbbf24</text>
+        <circle cx="540" cy="240" r="4" fill="#22c55e" stroke="#0a0a0a" stroke-width="1.5"/>
+      </g>
+
+      <!-- ───────── Emission node (output) ───────── -->
+      <g>
+        <rect x="580" y="200" width="160" height="60" rx="6" fill="rgba(34,197,94,0.05)" stroke="#22c55e" stroke-width="1.2"/>
+        <rect x="580" y="200" width="160" height="16" rx="6" fill="url(#sgHeaderActive)"/>
+        <rect x="580" y="210" width="160" height="6" fill="url(#sgHeaderActive)"/>
+        <text x="660" y="211" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#22c55e" font-weight="600">Emission</text>
+        <text x="660" y="233" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#888">in: edge mask</text>
+        <text x="660" y="248" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#22c55e" font-weight="600">→ master node</text>
+        <circle cx="580" cy="220" r="4" fill="#22c55e" stroke="#0a0a0a" stroke-width="1.5"/>
+        <circle cx="580" cy="235" r="4" fill="#22c55e" stroke="#0a0a0a" stroke-width="1.5"/>
+      </g>
+
+      <!-- Section labels -->
+      <text x="20" y="50" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#444" letter-spacing="0.15em">INPUTS</text>
+      <text x="660" y="50" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#22c55e" opacity="0.6" letter-spacing="0.15em">MASTER NODE</text>
+      <text x="20" y="295" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#444" letter-spacing="0.15em">PROPERTIES (INSPECTOR)</text>
+    </svg>
+  </div>
+  <figcaption class="text-[10px] text-[#555] font-plex tracking-wider uppercase text-center mt-2">
+    fig 3 — unity shader graph: dissolve material
+  </figcaption>
+</figure>

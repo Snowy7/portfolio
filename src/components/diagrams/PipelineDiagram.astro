@@ -1,0 +1,97 @@
+---
+// Horizontal SVG flowchart of the GPU rendering pipeline.
+// Two stages (Vertex + Fragment) are highlighted in green — those are the
+// programmable parts the reader will write themselves.
+---
+
+<figure class="my-8 not-prose">
+  <div class="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl p-4 sm:p-6 overflow-x-auto">
+    <svg
+      viewBox="0 0 760 180"
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-full h-auto min-w-[640px]"
+      role="img"
+      aria-label="GPU rendering pipeline: 3D Model, Vertex Shader, Rasterization, Fragment Shader, Final Image"
+    >
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#3a3a3a" />
+        </marker>
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      <!-- Stage 1: 3D Model -->
+      <g>
+        <rect x="10" y="50" width="110" height="80" rx="8" fill="#0f0f0f" stroke="#2a2a2a" stroke-width="1" />
+        <text x="65" y="80" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" fill="#999" font-weight="500">3D Model</text>
+        <text x="65" y="100" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#555">vertices</text>
+        <text x="65" y="116" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#555">+ uvs</text>
+      </g>
+
+      <!-- Arrow 1 -->
+      <line x1="125" y1="90" x2="155" y2="90" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#arrow)" />
+
+      <!-- Stage 2: Vertex Shader (programmable) -->
+      <g>
+        <rect x="160" y="50" width="140" height="80" rx="8"
+              fill="rgba(34, 197, 94, 0.06)" stroke="#22c55e" stroke-width="1.5" filter="url(#glow)" />
+        <text x="230" y="78" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" fill="#22c55e" font-weight="600">Vertex Shader</text>
+        <text x="230" y="98" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#888">moves each point</text>
+        <text x="230" y="116" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#22c55e" font-weight="600" letter-spacing="0.1em">YOU WRITE</text>
+      </g>
+
+      <!-- Arrow 2 -->
+      <line x1="305" y1="90" x2="335" y2="90" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#arrow)" />
+
+      <!-- Stage 3: Rasterization -->
+      <g>
+        <rect x="340" y="50" width="120" height="80" rx="8" fill="#0f0f0f" stroke="#2a2a2a" stroke-width="1" />
+        <text x="400" y="80" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" fill="#999" font-weight="500">Rasterize</text>
+        <text x="400" y="100" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#555">triangles →</text>
+        <text x="400" y="116" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#555">pixels</text>
+      </g>
+
+      <!-- Arrow 3 -->
+      <line x1="465" y1="90" x2="495" y2="90" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#arrow)" />
+
+      <!-- Stage 4: Fragment Shader (programmable) -->
+      <g>
+        <rect x="500" y="50" width="150" height="80" rx="8"
+              fill="rgba(34, 197, 94, 0.06)" stroke="#22c55e" stroke-width="1.5" filter="url(#glow)" />
+        <text x="575" y="78" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" fill="#22c55e" font-weight="600">Fragment Shader</text>
+        <text x="575" y="98" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#888">colors each pixel</text>
+        <text x="575" y="116" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#22c55e" font-weight="600" letter-spacing="0.1em">YOU WRITE</text>
+      </g>
+
+      <!-- Arrow 4 -->
+      <line x1="655" y1="90" x2="685" y2="90" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#arrow)" />
+
+      <!-- Stage 5: Final Image -->
+      <g>
+        <rect x="690" y="50" width="60" height="80" rx="8" fill="#0f0f0f" stroke="#2a2a2a" stroke-width="1" />
+        <text x="720" y="86" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#999" font-weight="500">Image</text>
+        <text x="720" y="104" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="14" fill="#22c55e">✓</text>
+      </g>
+
+      <!-- Section labels -->
+      <text x="65" y="30" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#444" letter-spacing="0.15em">INPUT</text>
+      <text x="395" y="30" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#444" letter-spacing="0.15em">GPU PIPELINE</text>
+      <text x="720" y="30" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#444" letter-spacing="0.15em">OUTPUT</text>
+
+      <line x1="10" y1="155" x2="125" y2="155" stroke="#1a1a1a" stroke-width="1" />
+      <line x1="160" y1="155" x2="650" y2="155" stroke="rgba(34,197,94,0.25)" stroke-width="1" stroke-dasharray="3 3" />
+      <line x1="690" y1="155" x2="750" y2="155" stroke="#1a1a1a" stroke-width="1" />
+
+      <text x="395" y="170" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#22c55e" opacity="0.6" letter-spacing="0.15em">PROGRAMMABLE STAGES</text>
+    </svg>
+  </div>
+  <figcaption class="text-[10px] text-[#555] font-plex tracking-wider uppercase text-center mt-2">
+    fig 1 — gpu rendering pipeline
+  </figcaption>
+</figure>
