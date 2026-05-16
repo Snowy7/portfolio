@@ -24,7 +24,7 @@ const { Content } = await render(post);
   article={{ publishedTime: post.data.date, tags: post.data.tags }}
 >
   <div class="min-h-screen bg-black text-[#999] font-plex antialiased selection:bg-green-500/20 selection:text-green-300">
-    <AppShell client:only="vue">
+    <AppShell client:load>
 
       <article class="pt-20 sm:pt-24 pb-16 px-4 sm:px-6 relative z-10">
         <div class="max-w-3xl mx-auto">
@@ -55,9 +55,7 @@ const { Content } = await render(post);
           </header>
 
           <!-- Content -->
-          <!-- No data-animate here: AppShell is client:only and its Vue hydration -->
-          <!-- re-renders this slot, which would clobber any .animate class applied -->
-          <!-- by the inline boot script and leave content stuck at opacity:0. -->
+          <!-- Keep long article content immediately visible; only the header uses boot animation. -->
           <div class="prose-terminal">
             {post.body && post.body.trim().length > 0 ? (
               <Content />
