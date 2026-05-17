@@ -1,0 +1,84 @@
+---
+// Visualize a single HTTP request/response trip:
+//   Client → Request → Server (API) → Response → Client
+// The "waiter at the restaurant" analogy in §6 maps directly onto this.
+---
+
+<figure class="my-8 not-prose">
+  <div class="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl p-4 sm:p-6 overflow-x-auto">
+    <svg
+      viewBox="0 0 760 240"
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-full h-auto min-w-[640px]"
+      role="img"
+      aria-label="HTTP request/response flow: client to API server and back"
+    >
+      <defs>
+        <marker id="apiArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#22c55e"/>
+        </marker>
+        <marker id="apiArrowReply" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#7dd3fc"/>
+        </marker>
+      </defs>
+
+      <!-- ─── Client (left) ─── -->
+      <g>
+        <rect x="30" y="60" width="170" height="140" rx="10" fill="#0f0f0f" stroke="#2a2a2a" stroke-width="1.2"/>
+        <text x="115" y="52" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#666" letter-spacing="0.15em">YOUR SCRIPT</text>
+        <!-- Terminal-y window -->
+        <rect x="48" y="78" width="134" height="20" rx="3" fill="#161616" stroke="#2a2a2a" stroke-width="0.6"/>
+        <circle cx="56" cy="88" r="2" fill="#ff5f57"/>
+        <circle cx="64" cy="88" r="2" fill="#febc2e"/>
+        <circle cx="72" cy="88" r="2" fill="#28c840"/>
+        <text x="115" y="120" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#22c55e">requests.get(url)</text>
+        <text x="115" y="138" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#888">→ response.json()</text>
+        <text x="115" y="170" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#666">Python · curl · browser</text>
+      </g>
+
+      <!-- ─── Request arrow (top) — Client → Server ─── -->
+      <g>
+        <path d="M 205 100 C 320 100, 440 100, 555 100" fill="none" stroke="#22c55e" stroke-width="2" marker-end="url(#apiArrow)" stroke-dasharray="6 4"/>
+        <rect x="305" y="76" width="160" height="22" rx="4" fill="#0a0a0a" stroke="#22c55e" stroke-width="0.8"/>
+        <text x="385" y="91" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#22c55e" font-weight="600">GET /v0/topstories.json</text>
+      </g>
+
+      <!-- ─── Response arrow (bottom) — Server → Client ─── -->
+      <g>
+        <path d="M 555 160 C 440 160, 320 160, 205 160" fill="none" stroke="#7dd3fc" stroke-width="2" marker-end="url(#apiArrowReply)" stroke-dasharray="6 4"/>
+        <rect x="285" y="162" width="200" height="22" rx="4" fill="#0a0a0a" stroke="#7dd3fc" stroke-width="0.8"/>
+        <text x="385" y="177" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#7dd3fc" font-weight="600">200 OK · [123, 456, 789, …]</text>
+      </g>
+
+      <!-- ─── Server / API (right) ─── -->
+      <g>
+        <rect x="555" y="60" width="180" height="140" rx="10" fill="#0f0f0f" stroke="#2a2a2a" stroke-width="1.2"/>
+        <text x="645" y="52" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#666" letter-spacing="0.15em">API SERVER</text>
+        <!-- Stacked "rack" -->
+        <g>
+          <rect x="572" y="80" width="146" height="18" rx="2" fill="#161616" stroke="#2a2a2a" stroke-width="0.6"/>
+          <circle cx="580" cy="89" r="2.5" fill="#22c55e"/>
+          <text x="592" y="92" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#888">route handler</text>
+          <rect x="572" y="102" width="146" height="18" rx="2" fill="#161616" stroke="#2a2a2a" stroke-width="0.6"/>
+          <circle cx="580" cy="111" r="2.5" fill="#22c55e"/>
+          <text x="592" y="114" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#888">business logic</text>
+          <rect x="572" y="124" width="146" height="18" rx="2" fill="#161616" stroke="#2a2a2a" stroke-width="0.6"/>
+          <circle cx="580" cy="133" r="2.5" fill="#22c55e"/>
+          <text x="592" y="136" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#888">db query</text>
+        </g>
+        <text x="645" y="170" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#666">hosted somewhere</text>
+      </g>
+
+      <!-- Labels at top -->
+      <g font-family="'IBM Plex Mono', monospace" font-size="8" fill="#22c55e" letter-spacing="0.15em">
+        <text x="385" y="40" text-anchor="middle">① REQUEST</text>
+      </g>
+      <g font-family="'IBM Plex Mono', monospace" font-size="8" fill="#7dd3fc" letter-spacing="0.15em">
+        <text x="385" y="208" text-anchor="middle">② RESPONSE</text>
+      </g>
+    </svg>
+  </div>
+  <figcaption class="text-[10px] text-[#555] font-plex tracking-wider uppercase text-center mt-2">
+    fig 2 — http request / response flow
+  </figcaption>
+</figure>

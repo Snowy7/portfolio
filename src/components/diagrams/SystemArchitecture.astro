@@ -1,0 +1,99 @@
+---
+// Three-tier architecture diagram: Frontend ↔ Backend ↔ Database.
+// Shows the conceptual layers most modern systems are made of.
+---
+
+<figure class="my-8 not-prose">
+  <div class="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl p-4 sm:p-6 overflow-x-auto">
+    <svg
+      viewBox="0 0 760 220"
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-full h-auto min-w-[640px]"
+      role="img"
+      aria-label="Three-tier architecture: Frontend, Backend, Database"
+    >
+      <defs>
+        <marker id="archArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#3a3a3a"/>
+        </marker>
+        <marker id="archArrowBack" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M10,0 L0,5 L10,10 z" fill="#3a3a3a"/>
+        </marker>
+      </defs>
+
+      <!-- ─── Frontend (left) ─── -->
+      <g>
+        <rect x="40" y="50" width="180" height="120" rx="10" fill="#0f0f0f" stroke="#2a2a2a" stroke-width="1.2"/>
+        <text x="130" y="42" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#666" letter-spacing="0.15em">FRONTEND</text>
+        <!-- Stylized browser/dashboard window inside the box -->
+        <rect x="60" y="70" width="140" height="80" rx="4" fill="#161616" stroke="#2a2a2a" stroke-width="0.8"/>
+        <line x1="60" y1="82" x2="200" y2="82" stroke="#2a2a2a" stroke-width="0.8"/>
+        <circle cx="68" cy="76" r="2" fill="#444"/>
+        <circle cx="76" cy="76" r="2" fill="#444"/>
+        <circle cx="84" cy="76" r="2" fill="#444"/>
+        <rect x="70" y="92" width="90" height="6" rx="1" fill="#22c55e" opacity="0.5"/>
+        <rect x="70" y="104" width="120" height="4" rx="1" fill="#333"/>
+        <rect x="70" y="114" width="100" height="4" rx="1" fill="#333"/>
+        <rect x="70" y="124" width="60" height="4" rx="1" fill="#333"/>
+        <rect x="70" y="136" width="40" height="8" rx="2" fill="#22c55e" opacity="0.3"/>
+        <text x="130" y="190" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#888">user interface</text>
+      </g>
+
+      <!-- Connection Frontend ↔ Backend -->
+      <g>
+        <line x1="222" y1="105" x2="318" y2="105" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#archArrow)"/>
+        <line x1="318" y1="125" x2="222" y2="125" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#archArrowBack)"/>
+        <text x="270" y="98" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#22c55e" opacity="0.7">HTTP</text>
+      </g>
+
+      <!-- ─── Backend (middle) ─── -->
+      <g>
+        <rect x="320" y="50" width="180" height="120" rx="10" fill="#0f0f0f" stroke="#22c55e" stroke-width="1.5"/>
+        <text x="410" y="42" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#22c55e" letter-spacing="0.15em">BACKEND</text>
+        <!-- Stylized server/processing element -->
+        <rect x="345" y="72" width="130" height="22" rx="3" fill="#161616" stroke="#22c55e" stroke-width="0.8" stroke-opacity="0.4"/>
+        <circle cx="356" cy="83" r="3" fill="#22c55e" opacity="0.7"/>
+        <text x="368" y="86" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#888">auth / api</text>
+        <rect x="345" y="100" width="130" height="22" rx="3" fill="#161616" stroke="#22c55e" stroke-width="0.8" stroke-opacity="0.4"/>
+        <circle cx="356" cy="111" r="3" fill="#22c55e" opacity="0.7"/>
+        <text x="368" y="114" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#888">business logic</text>
+        <rect x="345" y="128" width="130" height="22" rx="3" fill="#161616" stroke="#22c55e" stroke-width="0.8" stroke-opacity="0.4"/>
+        <circle cx="356" cy="139" r="3" fill="#22c55e" opacity="0.7"/>
+        <text x="368" y="142" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#888">routing</text>
+        <text x="410" y="190" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#888">"brain"</text>
+      </g>
+
+      <!-- Connection Backend ↔ Database -->
+      <g>
+        <line x1="502" y1="105" x2="598" y2="105" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#archArrow)"/>
+        <line x1="598" y1="125" x2="502" y2="125" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#archArrowBack)"/>
+        <text x="550" y="98" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#22c55e" opacity="0.7">SQL</text>
+      </g>
+
+      <!-- ─── Database (right) ─── -->
+      <g>
+        <rect x="600" y="50" width="120" height="120" rx="10" fill="#0f0f0f" stroke="#2a2a2a" stroke-width="1.2"/>
+        <text x="660" y="42" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#666" letter-spacing="0.15em">DATABASE</text>
+        <!-- Classic database cylinder -->
+        <g transform="translate(660, 110)">
+          <ellipse cx="0" cy="-24" rx="34" ry="8" fill="#161616" stroke="#2a2a2a" stroke-width="0.8"/>
+          <path d="M -34 -24 L -34 24 A 34 8 0 0 0 34 24 L 34 -24" fill="#161616" stroke="#2a2a2a" stroke-width="0.8"/>
+          <ellipse cx="0" cy="-12" rx="34" ry="8" fill="none" stroke="#22c55e" stroke-width="0.6" stroke-opacity="0.4"/>
+          <ellipse cx="0" cy="0" rx="34" ry="8" fill="none" stroke="#22c55e" stroke-width="0.6" stroke-opacity="0.4"/>
+          <ellipse cx="0" cy="12" rx="34" ry="8" fill="none" stroke="#22c55e" stroke-width="0.6" stroke-opacity="0.4"/>
+        </g>
+        <text x="660" y="190" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#888">storage</text>
+      </g>
+
+      <!-- Bottom hints — what kind of work happens at each tier -->
+      <g font-family="'IBM Plex Mono', monospace" font-size="8" fill="#444">
+        <text x="130" y="207" text-anchor="middle">buttons · views · forms</text>
+        <text x="410" y="207" text-anchor="middle">requests · logic · routes</text>
+        <text x="660" y="207" text-anchor="middle">logs · metrics · users</text>
+      </g>
+    </svg>
+  </div>
+  <figcaption class="text-[10px] text-[#555] font-plex tracking-wider uppercase text-center mt-2">
+    fig 1 — modern system architecture
+  </figcaption>
+</figure>

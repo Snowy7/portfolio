@@ -1,0 +1,565 @@
+---
+title: "Automation & Data Retrieval: A Practical Intro for Ops Engineers"
+excerpt: "A hands-on intro to automating tasks with Python — APIs, HTTP, JSON, error handling, files, and databases. Every example is a live, runnable HTTP request."
+date: "May 2026"
+readTime: "16 min"
+tags: ["Automation", "Python", "APIs", "HTTP", "Interactive"]
+published: true
+---
+
+import ApiPlayground from "../../components/ApiPlayground.vue";
+import PyPlayground from "../../components/PyPlayground.vue";
+import SystemArchitecture from "../../components/diagrams/SystemArchitecture.astro";
+import ApiFlowDiagram from "../../components/diagrams/ApiFlowDiagram.astro";
+import HttpMethodsCard from "../../components/diagrams/HttpMethodsCard.astro";
+import AutomationPipeline from "../../components/diagrams/AutomationPipeline.astro";
+
+If you're an ops, networking, or infrastructure engineer, **80% of your day is a loop you could have written.** Pulling logs, checking dashboards, gathering reports, poking a switch to see if it's alive. This post is the shortest path from "I run these commands by hand" to "a script runs them while I sleep."
+
+Every panel below is **live**. The blue ones send a real HTTP request when you click `SEND`. The green ones boot a real CPython interpreter ([Pyodide](https://pyodide.org/), ~10MB lazy-loaded on first run) and execute the Python you see — `requests`, loops, `try/except`, files, SQLite, the works.
+
+## 1. What is automation?
+
+Automation is using software to do work that you'd otherwise do by hand. In ops, the candidates are obvious:
+
+- Checking logs
+- Gathering reports
+- Monitoring systems
+- Fetching alerts
+- Configuring devices
+- Backing up files
+- Sending summaries
+- Generating dashboards
+
+> Without automation: a human repeats the work every day.
+> With automation: you write the logic once, the machine repeats it forever.
+
+That second line is the whole pitch.
+
+## 2. Why it matters
+
+| Problem            | Automation benefit    |
+| ------------------ | --------------------- |
+| Repetitive work    | Saves time            |
+| Human error        | Improves consistency  |
+| Slow operations    | Faster execution      |
+| Manual monitoring  | Continuous monitoring |
+| Hard to scale      | Repeatable systems    |
+
+The real goal isn't "writing scripts" — it's **connecting systems together automatically**. Pulling data from one place, processing it, sending the result somewhere else. Everything in this post is in service of that.
+
+## 3. How modern systems work
+
+Before automating, understand the shape of what you're automating. Almost every modern system is the same three layers:
+
+<SystemArchitecture />
+
+- **Frontend** — what humans look at. Dashboards, mobile apps, the Grafana panel you stare at on-call.
+- **Backend** — the brain. Receives requests, runs logic, talks to the database, returns answers.
+- **Database** — long-term storage. Logs, metrics, configs, user records.
+
+The backend is the layer you'll interact with most. It exposes its capabilities through **APIs**.
+
+## 4. APIs — the part that actually matters
+
+API = **Application Programming Interface**. It's how one piece of software talks to another. If a system has an API, you can automate it.
+
+The waiter analogy:
+
+> You don't walk into the kitchen and start cooking your own food. You tell the waiter what you want, the waiter takes the request to the kitchen, and the kitchen sends food back through the waiter. The waiter is the API.
+
+Mechanically, it looks like this:
+
+<ApiFlowDiagram />
+
+You send a **request** (with a method, a URL, sometimes a body). The server sends back a **response** (a status code, headers, and a body). That's the entire conversation.
+
+Almost every modern platform — cloud providers, monitoring tools, network gear, security systems, CI/CD — exposes APIs. Master HTTP and you can automate all of them.
+
+## 5. HTTP methods
+
+The method tells the server what kind of action you want. There are nine in [the HTTP spec](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods), but four cover 99% of automation:
+
+<HttpMethodsCard />
+
+For data retrieval — what most automation scripts spend their time doing — `GET` is the only one you need.
+
+## 6. JSON — the universal data format
+
+Once you've made an HTTP request, you have a response body. 99% of the time, it's **JSON** — "JavaScript Object Notation" — a tiny text format that became the de facto language every API speaks. It [won out over XML](https://www.json.org/json-en.html) in the late 2000s because it's smaller, faster to parse, and maps cleanly to data structures every programming language already has.
+
+### The shape
+
+JSON has exactly two compound structures and four primitives. That's it. Every JSON document is built from these six things:
+
+| | What it looks like | Python equivalent |
+| --- | --- | --- |
+| **Object** | `{ "key": value }` | `dict` |
+| **Array** | `[ value, value, ... ]` | `list` |
+| **String** | `"hello"` | `str` |
+| **Number** | `120` or `3.14` | `int` / `float` |
+| **Boolean** | `true` / `false` | `True` / `False` |
+| **Null** | `null` | `None` |
+
+A real API response is just these six things nested:
+
+```json
+{
+  "title": "Example Article",
+  "score": 120,
+  "author": "john",
+  "published": true,
+  "edited_at": null,
+  "tags": ["api", "automation"],
+  "metadata": {
+    "word_count": 1840,
+    "language": "en"
+  },
+  "comments": [
+    { "id": 1, "by": "alice", "text": "Nice!" },
+    { "id": 2, "by": "bob",   "text": "+1" }
+  ]
+}
+```
+
+Three things to notice:
+
+- Strings are always in **double quotes** (single quotes aren't valid JSON).
+- No trailing commas. `{"a": 1,}` is invalid — many editors auto-add them, then your API call breaks.
+- Keys are always strings, even when they look like numbers.
+
+### Parsing JSON in Python
+
+In Python, the [`json` module](https://docs.python.org/3/library/json.html) handles the conversion. Most of the time you don't even need to touch it directly — `requests` exposes `.json()` as a shortcut:
+
+```python
+import requests, json
+
+response = requests.get("https://api.example.com/article")
+
+# Shortcut — calls json.loads(response.text) under the hood
+data = response.json()
+
+# Equivalent long form:
+data = json.loads(response.text)
+```
+
+After parsing, you access fields with normal Python indexing. Nesting just chains:
+
+```python
+print(data["title"])              # "Example Article"
+print(data["tags"][0])            # "api"
+print(data["metadata"]["language"])  # "en"
+print(data["comments"][0]["by"])  # "alice"
+```
+
+### Going the other way — Python → JSON
+
+To send JSON in a `POST` body, you serialize it with `json.dumps()`:
+
+```python
+payload = {"title": "Hello", "tags": ["new"]}
+
+requests.post(
+    "https://api.example.com/articles",
+    json=payload,  # requests serializes the dict for you
+)
+```
+
+The `json=` argument is the clean way — `requests` calls `json.dumps()` and sets the `Content-Type: application/json` header automatically.
+
+### Common gotchas
+
+- **Missing keys raise `KeyError`.** `data["nope"]` crashes. Use `data.get("nope", default)` when a field might be absent.
+- **Strings vs numbers.** Some APIs return numeric IDs as strings (`"42"`) — surprising in arithmetic. Cast explicitly with `int()`.
+- **`null` becomes `None`.** Don't `len(None)`.
+- **Unicode is fine.** JSON is UTF-8 by default; Python handles it without escaping.
+
+### Where to learn more
+
+- [json.org](https://www.json.org/json-en.html) — the formal spec, one page, surprisingly readable.
+- [MDN — Working with JSON](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON) — JS-focused but the structural intuitions transfer to any language.
+- [Python `json` module](https://docs.python.org/3/library/json.html) — every function and parameter.
+- [`jq`](https://jqlang.github.io/jq/) — command-line JSON wrangler; absolute lifesaver for poking at APIs from a shell.
+
+## 7. Your first API request
+
+Install the [requests library](https://requests.readthedocs.io/en/latest/) — the de facto standard for HTTP in Python:
+
+```bash
+pip install requests
+```
+
+We'll use the [Hacker News API](https://github.com/HackerNews/API) — public, no auth, well-documented. Below is your **first real request**. Click `SEND` and watch the actual `200 OK` and JSON come back.
+
+<ApiPlayground
+  client:only="vue"
+  title="hn · top story ids"
+  url="https://hacker-news.firebaseio.com/v0/topstories.json"
+  pythonCode={`import requests
+
+url = "https://hacker-news.firebaseio.com/v0/topstories.json"
+
+response = requests.get(url)
+
+print(response.status_code)
+print(response.json()[:10])`}
+/>
+
+Three lines of Python, one HTTP request, and you have the IDs of the top 500 stories on Hacker News right now. That's the entire pattern.
+
+### Understanding what just happened
+
+- **`requests.get(url)`** — sends an HTTP GET request to the URL, blocks until the response comes back.
+- **`response.status_code`** — the integer code the server returned. `200` means success; `404` means not found; `500` means the server broke. ([full list](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status))
+- **`response.json()`** — parses the response body as JSON and gives you back native Python data (`dict` / `list`).
+
+## 8. Real data retrieval
+
+The endpoint above only returned IDs — useful but not enough. To get actual story content, you need to call a second endpoint per ID. Try one:
+
+<ApiPlayground
+  client:only="vue"
+  title="hn · single story"
+  url="https://hacker-news.firebaseio.com/v0/item/8863.json"
+  pythonCode={`import requests
+
+story_id = 8863
+url = f"https://hacker-news.firebaseio.com/v0/item/{story_id}.json"
+
+story = requests.get(url).json()
+
+print(story["title"])
+print(story["score"], "points")
+print("by", story["by"])`}
+/>
+
+Now we have real data — title, score, author. The URL pattern is `/v0/item/{id}.json`, and you can plug in any ID from the previous request.
+
+## 9. Loops — the workhorse of automation
+
+The pattern from §7 + §8 is the universal automation shape:
+
+```txt
+get a list of things
+for each thing:
+    fetch its details
+    do something with the result
+```
+
+In Python, that's just a `for` loop. Hit `RUN` — this actually executes in your browser. The first run downloads the Python runtime; subsequent runs are instant:
+
+<PyPlayground
+  client:only="vue"
+  title="real loop · fetch 3 stories"
+  height={220}
+  outputHeight={160}
+  code={`import requests
+
+base = "https://hacker-news.firebaseio.com/v0"
+
+top_ids = requests.get(f"{base}/topstories.json").json()
+
+# Slice [:3] keeps it polite. Try bumping to 10 to see the loop work harder.
+for story_id in top_ids[:3]:
+    story = requests.get(f"{base}/item/{story_id}.json").json()
+    print(story["title"])`}
+/>
+
+Real HTTP requests, real titles printed. The slice `[:3]` keeps it polite — Hacker News doesn't mind a few requests, but loop over the full 500 and you've written a rate-limit problem.
+
+## 10. Functions — reuse the same logic
+
+Once a script does the same thing more than once, wrap it in a function. Functions are how you turn "a script" into "a tool you reuse next week":
+
+<PyPlayground
+  client:only="vue"
+  title="define + reuse"
+  height={280}
+  outputHeight={140}
+  code={`import requests
+
+BASE = "https://hacker-news.firebaseio.com/v0"
+
+def get_story(story_id: int) -> dict:
+    """Fetch a single Hacker News story by ID."""
+    url = f"{BASE}/item/{story_id}.json"
+    return requests.get(url).json()
+
+def get_top_stories(limit: int = 3) -> list[dict]:
+    """Return the latest top N stories with full metadata."""
+    ids = requests.get(f"{BASE}/topstories.json").json()
+    return [get_story(i) for i in ids[:limit]]
+
+for story in get_top_stories(3):
+    print(f'{story["score"]:>4} pts  ·  {story["title"]}')`}
+/>
+
+Same logic, now it's a tiny library. You can import `get_top_stories` from another script next time. Try editing the `limit` argument or the print format — the next `RUN` picks up your changes instantly.
+
+## 11. Error handling — networks fail
+
+The internet is unreliable. Servers go offline. DNS misconfigures. Rate limits kick in. A real automation script handles failure rather than crashing silently.
+
+The Python pattern is `try` / `except`:
+
+```python
+import requests
+
+try:
+    response = requests.get("https://api.example.com/data")
+    response.raise_for_status()   # raises if status >= 400
+    data = response.json()
+    print(data)
+
+except requests.exceptions.RequestException as e:
+    # Catches network errors, timeouts, HTTP errors
+    print(f"Request failed: {e}")
+```
+
+Click `RUN` below. The URL is intentionally broken — watch how the script catches the failure and keeps running instead of crashing:
+
+<PyPlayground
+  client:only="vue"
+  title="try / except in action"
+  height={240}
+  outputHeight={140}
+  code={`import requests
+
+# This host doesn't exist — the request will fail.
+url = "https://this-host-does-not-exist-9999.invalid/data"
+
+try:
+    r = requests.get(url, timeout=5)
+    r.raise_for_status()       # raises if status >= 400
+    print(r.json())
+
+except requests.exceptions.RequestException as e:
+    print(f"Request failed gracefully: {type(e).__name__}")
+    print(f"  reason: {e}")
+
+print("Script continues here — we didn't crash.")`}
+/>
+
+The last line prints. **That's the whole point.** Without the `try/except`, a `requests.exceptions.ConnectionError` would propagate up, kill the script, and stop everything downstream — the cron job log fills with red, the rest of your automation never runs.
+
+> **Rule of thumb:** wrap every external call (HTTP, file, database, subprocess) in error handling. Anything that touches the outside world will eventually fail.
+
+## 12. File handling — storing results locally
+
+Most automation scripts produce **output** — reports, logs, summaries. The simplest output is a text file. Python's [`open()`](https://docs.python.org/3/library/functions.html#open) builtin is all you need:
+
+### Reading
+
+```python
+with open("data.txt", "r") as f:
+    content = f.read()
+
+print(content)
+```
+
+### Writing
+
+```python
+with open("output.txt", "w") as f:
+    f.write("Hello, world\n")
+```
+
+### File modes worth knowing
+
+| Mode  | Meaning                                |
+| ----- | -------------------------------------- |
+| `"r"` | Read (the default)                     |
+| `"w"` | Write — **truncates the file first**   |
+| `"a"` | Append — adds to the end               |
+| `"x"` | Create — fails if the file exists      |
+
+### Why `with`?
+
+The `with` block automatically closes the file when you're done — even if your code raises an exception inside the block. Without `with`, you have to remember to call `f.close()` yourself, and forgetting causes resource leaks. **Always use `with`.**
+
+## 13. Putting it together — a real automation script
+
+The classic "ops daily report" script. Four things in sequence:
+
+1. Fetch the top story IDs
+2. Loop through and pull each story's title + score
+3. Save to a text file
+4. Read the file back to confirm it looks right
+
+Click `RUN`. This isn't a mock — it really fetches from Hacker News, really writes a file (to Pyodide's virtual filesystem), and really reads it back:
+
+<PyPlayground
+  client:only="vue"
+  title="end-to-end pipeline"
+  height={320}
+  outputHeight={180}
+  code={`import requests
+
+BASE = "https://hacker-news.firebaseio.com/v0"
+
+# 1. Retrieve
+top_ids = requests.get(f"{BASE}/topstories.json").json()
+
+# 2. Process + 3. Store
+with open("news.txt", "w", encoding="utf-8") as f:
+    for story_id in top_ids[:3]:
+        story = requests.get(f"{BASE}/item/{story_id}.json").json()
+        title = story["title"]
+        score = story["score"]
+        f.write(f"{title} — {score} points\\n")
+
+print("✓ Wrote news.txt")
+print()
+
+# 4. Confirm — read the file back
+print("─── news.txt ───")
+with open("news.txt", "r", encoding="utf-8") as f:
+    print(f.read())`}
+/>
+
+Run that on a cron schedule and you have a working "morning news digest" automation in 11 lines. Same shape for log summarizers, alert digests, daily reports — swap the API and the formatting, keep everything else.
+
+## 14. When files aren't enough — databases
+
+Text files are great for small, one-shot scripts. They fall apart when you want to:
+
+- Query historical data ("what was the avg score last Tuesday?")
+- Update records in place
+- Share data between scripts
+- Build a dashboard on top of the data
+
+That's what databases are for. Plenty of flavors exist — **MongoDB** and **DynamoDB** for JSON-like documents with no fixed schema, **InfluxDB** and **Prometheus** for time-series metrics — but for ops automation, **SQLite** is the perfect starting point. It's [built into Python's standard library](https://docs.python.org/3/library/sqlite3.html), the entire database is a single file, and there's no server to set up.
+
+### SQLite example
+
+`sqlite3` is built into Python's standard library, and into [Pyodide too](https://pyodide.org/en/stable/usage/wasm-constraints.html#included-but-not-importable-by-default) — so the panel below runs a real database, in your browser, with no server:
+
+<PyPlayground
+  client:only="vue"
+  title="sqlite · create · insert · select"
+  height={340}
+  outputHeight={180}
+  code={`import sqlite3
+import requests
+
+# An in-memory database — clean slate each run.
+# In a real script you'd connect to "news.db" instead.
+conn = sqlite3.connect(":memory:")
+cursor = conn.cursor()
+
+cursor.execute("""
+CREATE TABLE news (
+    id    INTEGER PRIMARY KEY,
+    title TEXT NOT NULL,
+    score INTEGER
+)
+""")
+
+# Fetch a few stories and insert them
+base = "https://hacker-news.firebaseio.com/v0"
+top_ids = requests.get(f"{base}/topstories.json").json()
+
+for story_id in top_ids[:5]:
+    story = requests.get(f"{base}/item/{story_id}.json").json()
+    cursor.execute(
+        "INSERT INTO news (id, title, score) VALUES (?, ?, ?)",
+        (story["id"], story["title"], story.get("score", 0)),
+    )
+
+conn.commit()
+
+# Now query like any other database
+print("Top by score:")
+for row in cursor.execute("SELECT title, score FROM news ORDER BY score DESC"):
+    print(f"  {row[1]:>4}  ·  {row[0]}")
+
+conn.close()`}
+/>
+
+A database gives you **persistence + queryability + analysis** for almost zero extra work. Write the data once; query it from dashboards, alerts, and reports forever after.
+
+## 15. The automation pipeline
+
+Zoom out. Almost every automation script you'll ever write is a variation of the same four-stage flow:
+
+<AutomationPipeline />
+
+- **Retrieve** — fetch data from somewhere (API, file, device, log).
+- **Process** — parse, filter, transform, loop.
+- **Store** — write to a file, database, or both.
+- **Send** — deliver the result (Slack message, email, dashboard update, alert).
+
+Recognize this shape and the next script you write almost designs itself.
+
+## 16. Real-world examples
+
+| Task                | Pipeline                                       |
+| ------------------- | ---------------------------------------------- |
+| Daily news report   | Fetch API → format → write file → email it     |
+| Monitoring system   | Read metrics → detect anomalies → alert        |
+| Network automation  | Pull device configs → diff → apply updates     |
+| Log processing      | Read logs → filter errors → write summary      |
+| Alerting system     | Poll thresholds → if breached → send Slack     |
+
+Every one of those is the same shape from §15, with different sources and sinks.
+
+## 17. Try it yourself
+
+### Exercise
+
+Write a script that:
+
+1. Retrieves the top **10** Hacker News stories.
+2. Pulls each story's `title` and `score`.
+3. Saves the result to a text file.
+
+(You already have all the pieces in §13 — just bump `[:5]` to `[:10]`.)
+
+### Bonus
+
+Store the top 5 stories in a **SQLite database** instead of a text file. Bonus to the bonus: run it daily and add a `created_at` timestamp so you can graph score-over-time later.
+
+## 18. The takeaway
+
+> Automation is not about writing random scripts. It's about connecting systems together reliably.
+
+Once you can:
+
+- **retrieve** data
+- **process** it
+- **store** it
+- **send** the result somewhere
+
+…you can automate almost anything. The Python you've seen in this post — `requests.get`, a `for` loop, a `with open`, a try/except — is the entire foundation. Every "advanced" ops script you'll ever read is a remix of those four primitives.
+
+## 19. Further reading
+
+### Python & HTTP
+
+- [Python `requests` documentation](https://requests.readthedocs.io/en/latest/) — the library, the API reference, the Quickstart.
+- [Python `open()` builtin](https://docs.python.org/3/library/functions.html#open) — every mode, every parameter.
+- [MDN — HTTP overview](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview) — request/response, methods, status codes, headers. Read this once and HTTP stops being a mystery.
+- [MDN — HTTP methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) — `GET`, `POST`, `PUT`, `DELETE`, and the rarer ones.
+- [MDN — HTTP status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) — what every code actually means.
+
+### JSON
+
+- [json.org](https://www.json.org/json-en.html) — the formal spec, one page. Bookmark it.
+- [Python `json` module](https://docs.python.org/3/library/json.html) — `loads`, `dumps`, encoders, and edge cases.
+- [MDN — Working with JSON](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON) — JS-focused tutorial; structural intuitions transfer to any language.
+- [`jq`](https://jqlang.github.io/jq/) — command-line JSON wrangler. Pipe `curl` output through it and life gets better immediately.
+
+### APIs used in this post
+
+- [Hacker News API](https://github.com/HackerNews/API) — the JSON API powering every playground above. Public, no auth, great to practice on.
+
+### Databases
+
+- [SQLite documentation](https://www.sqlite.org/docs.html) — the database, the SQL dialect, the C library.
+- [Python `sqlite3` module](https://docs.python.org/3/library/sqlite3.html) — Python's standard-library bindings to SQLite.
+
+### Going further
+
+- [Real Python — API Integration](https://realpython.com/api-integration-in-python/) — fuller tutorial on production-grade API consumption.
+- [12 Factor App — Config](https://12factor.net/config) — once your scripts handle credentials, do it right.

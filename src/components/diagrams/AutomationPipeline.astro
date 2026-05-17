@@ -1,0 +1,75 @@
+---
+// Horizontal 4-stage pipeline diagram: Retrieve → Process → Store → Send.
+// Mirrors the shape of the rendering-pipeline diagram in the shaders post
+// for visual continuity.
+---
+
+<figure class="my-8 not-prose">
+  <div class="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl p-4 sm:p-6 overflow-x-auto">
+    <svg
+      viewBox="0 0 760 180"
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-full h-auto min-w-[640px]"
+      role="img"
+      aria-label="Automation pipeline: Retrieve, Process, Store, Send"
+    >
+      <defs>
+        <marker id="apArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#3a3a3a"/>
+        </marker>
+      </defs>
+
+      <!-- 1. Retrieve -->
+      <g>
+        <rect x="20" y="50" width="160" height="80" rx="8" fill="rgba(34, 197, 94, 0.06)" stroke="#22c55e" stroke-width="1.5"/>
+        <text x="100" y="78" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" fill="#22c55e" font-weight="600">Retrieve</text>
+        <text x="100" y="100" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#888">fetch from</text>
+        <text x="100" y="116" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#666">api · file · device</text>
+      </g>
+
+      <line x1="185" y1="90" x2="215" y2="90" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#apArrow)"/>
+
+      <!-- 2. Process -->
+      <g>
+        <rect x="220" y="50" width="160" height="80" rx="8" fill="#0f0f0f" stroke="#2a2a2a" stroke-width="1"/>
+        <text x="300" y="78" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" fill="#ddd" font-weight="600">Process</text>
+        <text x="300" y="100" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#888">parse · filter</text>
+        <text x="300" y="116" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#666">loop · transform</text>
+      </g>
+
+      <line x1="385" y1="90" x2="415" y2="90" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#apArrow)"/>
+
+      <!-- 3. Store -->
+      <g>
+        <rect x="420" y="50" width="160" height="80" rx="8" fill="#0f0f0f" stroke="#2a2a2a" stroke-width="1"/>
+        <text x="500" y="78" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" fill="#ddd" font-weight="600">Store</text>
+        <text x="500" y="100" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#888">file · sqlite</text>
+        <text x="500" y="116" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#666">postgres · mongo</text>
+      </g>
+
+      <line x1="585" y1="90" x2="615" y2="90" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#apArrow)"/>
+
+      <!-- 4. Send / Display -->
+      <g>
+        <rect x="620" y="50" width="120" height="80" rx="8" fill="rgba(34, 197, 94, 0.06)" stroke="#22c55e" stroke-width="1.5"/>
+        <text x="680" y="78" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" fill="#22c55e" font-weight="600">Send</text>
+        <text x="680" y="100" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#888">slack · email</text>
+        <text x="680" y="116" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#666">dashboard · alert</text>
+      </g>
+
+      <!-- Section labels above -->
+      <text x="100" y="32" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#22c55e" opacity="0.6" letter-spacing="0.15em">INPUT</text>
+      <text x="400" y="32" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#444" letter-spacing="0.15em">INTERNAL</text>
+      <text x="680" y="32" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#22c55e" opacity="0.6" letter-spacing="0.15em">OUTPUT</text>
+
+      <!-- Caption row -->
+      <line x1="20" y1="150" x2="180" y2="150" stroke="rgba(34,197,94,0.25)" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="220" y1="150" x2="580" y2="150" stroke="#1a1a1a" stroke-width="1"/>
+      <line x1="620" y1="150" x2="740" y2="150" stroke="rgba(34,197,94,0.25)" stroke-width="1" stroke-dasharray="3 3"/>
+      <text x="380" y="167" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#444" letter-spacing="0.15em">EVERY AUTOMATION SCRIPT FOLLOWS THIS SHAPE</text>
+    </svg>
+  </div>
+  <figcaption class="text-[10px] text-[#555] font-plex tracking-wider uppercase text-center mt-2">
+    fig 4 — automation pipeline
+  </figcaption>
+</figure>

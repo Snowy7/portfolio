@@ -393,7 +393,8 @@ const commands: Record<string, () => string[]> = {
   blog: () => [
     "",
     '<span class="text-green-400">Recent:</span>',
-    '  <span class="text-white">Shaders Explained</span>  <span class="text-[#555]">12m</span>',
+    '  <span class="text-white">Automation & Data Retrieval</span>  <span class="text-[#555]">16m</span>',
+    '  <span class="text-white">Shaders Explained</span>  <span class="text-[#555]">15m</span>',
     "",
     '  → <a href="/blog" class="text-green-400 underline">All posts</a>',
     "",
